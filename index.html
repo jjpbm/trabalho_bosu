@@ -34,7 +34,10 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
-    // INSIRA AQUI AS SUAS CHAVES DO FIREBASE
+    // 1. DEFINA AQUI A SUA PALAVRA-PASSE
+    const SENHA_CORRETA = "bosu123"; 
+
+    // 2. CONFIGURAÇÃO DO FIREBASE (Mantenha as suas chaves aqui)
     const firebaseConfig = {
       apiKey: "AIzaSyASiNTd_r5CzxxgxQNuBL5UPtVjI5HpDcE",
   authDomain: "trabalho-bosu.firebaseapp.com",
@@ -50,56 +53,84 @@
     const db = getDatabase(app);
     const tasksRef = ref(db, 'tarefas_bosu');
 
-    const taskInput = document.getElementById('taskInput');
-    const statusSelect = document.getElementById('statusSelect');
-    const addBtn = document.getElementById('addBtn');
-    const todoList = document.getElementById('todoList');
-    const doneList = document.getElementById('doneList');
+    // Validação da Palavra-Passe ao entrar
+    let temAcessoEscrita = false;
+    const senhaIntroduzida = prompt("Por favor, introduza a palavra-passe para gerir a lista:");
 
-    addBtn.addEventListener('click', () => {
-      const text = taskInput.value.trim();
-      if (!text) return;
-      push(tasksRef, { text, status: statusSelect.value, timestamp: Date.now() });
-      taskInput.value = '';
-    });
+    if (senhaIntroduzida === SENHA_CORRETA) {
+      temAcessoEscrita = true;
+    } else {
+      alert("Palavra-passe incorreta ou cancelada. O site ficará no Modo de Apenas Leitura.");
+      // Esconde a barra de inserção de tarefas se não tiver acesso
+      document.addEventListener("DOMContentLoaded", () => {
+        const controlsDiv = document.querySelector('.controls');
+        if (controlsDiv) controlsDiv.style.display = 'none';
+      });
+    }
 
-    onValue(tasksRef, (snapshot) => {
-      todoList.innerHTML = '';
-      doneList.innerHTML = '';
-      const data = snapshot.val();
-      if (data) {
-        Object.keys(data).forEach(key => {
-          const item = data[key];
-          const card = createCardElement(key, item);
-          if (item.status === 'todo') todoList.appendChild(card);
-          else doneList.appendChild(card);
+    document.addEventListener("DOMContentLoaded", () => {
+      const taskInput = document.getElementById('taskInput');
+      const statusSelect = document.getElementById('statusSelect');
+      const addBtn = document.getElementById('addBtn');
+      const todoList = document.getElementById('todoList');
+      const doneList = document.getElementById('doneList');
+
+      if (addBtn && temAcessoEscrita) {
+        addBtn.addEventListener('click', () => {
+          const text = taskInput.value.trim();
+          if (!text) return;
+          push(tasksRef, { text, status: statusSelect.value, timestamp: Date.now() });
+          taskInput.value = '';
         });
       }
+
+      // Leitura de dados em tempo real (visível para todos)
+      onValue(tasksRef, (snapshot) => {
+        todoList.innerHTML = '';
+        doneList.innerHTML = '';
+        const data = snapshot.val();
+        if (data) {
+          Object.keys(data).forEach(key => {
+            const item = data[key];
+            const card = createCardElement(key, item);
+            if (item.status === 'todo') todoList.appendChild(card);
+            else doneList.appendChild(card);
+          });
+        }
+      });
+
+      function createCardElement(id, item) {
+        const div = document.createElement('div');
+        div.className = 'card';
+        const textSpan = document.createElement('span');
+        textSpan.textContent = item.text;
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'card-actions';
+
+        // Apenas adiciona botões de ação se o utilizador tiver introduzido a palavra-passe correta
+        if (temAcessoEscrita) {
+          if (item.status === 'todo') {
+            const moveBtn = document.createElement('button');
+            moveBtn.textContent = '➔ Mover p/ Feito';
+            moveBtn.onclick = () => update(ref(db, `tarefas_bosu/${id}`), { status: 'done' });
+            actionsDiv.appendChild(moveBtn);
+          }
+
+          const deleteBtn = document.createElement('button');
+          deleteBtn.className = 'delete';
+          deleteBtn.innerHTML = '🗑️';
+          deleteBtn.title = 'Apagar';
+          deleteBtn.onclick = () => remove(ref(db, `tarefas_bosu/${id}`));
+          actionsDiv.appendChild(deleteBtn);
+        }
+
+        div.appendChild(textSpan);
+        if (temAcessoEscrita) {
+          div.appendChild(actionsDiv);
+        }
+        return div;
+      }
     });
-
-    function createCardElement(id, item) {
-      const div = document.createElement('div');
-      div.className = 'card';
-      const textSpan = document.createElement('span');
-      textSpan.textContent = item.text;
-      const actionsDiv = document.createElement('div');
-      actionsDiv.className = 'card-actions';
-
-      const moveBtn = document.createElement('button');
-      moveBtn.textContent = item.status === 'todo' ? '➔ Mover p/ Feito' : '⬅ Mover p/ Por Fazer';
-      moveBtn.onclick = () => update(ref(db, `tarefas_bosu/${id}`), { status: item.status === 'todo' ? 'done' : 'todo' });
-
-      const deleteBtn = document.createElement('button');
-      deleteBtn.className = 'delete';
-      deleteBtn.textContent = '✕ Apagar';
-      deleteBtn.onclick = () => remove(ref(db, `tarefas_bosu/${id}`));
-
-      actionsDiv.appendChild(moveBtn);
-      actionsDiv.appendChild(deleteBtn);
-      div.appendChild(textSpan);
-      div.appendChild(actionsDiv);
-      return div;
-    }
   </script>
 </head>
 <body>
