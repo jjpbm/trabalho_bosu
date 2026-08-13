@@ -33,8 +33,9 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+    // IMPORTANTE: Adicionada a importação do serviço de Autenticação
+    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
-    // 1. DEFINA AQUI A SUA PALAVRA-PASSE
     const SENHA_CORRETA = "bosu123"; 
 
     // 2. CONFIGURAÇÃO DO FIREBASE (Mantenha as suas chaves aqui)
@@ -51,6 +52,13 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+    const auth = getAuth(app);
+
+    // Login silencioso automático
+    signInAnonymously(auth).catch((error) => {
+      console.error("Erro na autenticação anónima:", error);
+    });
+
     const tasksRef = ref(db, 'tarefas_bosu');
 
     // Validação da Palavra-Passe ao entrar
