@@ -292,10 +292,21 @@ const firebaseConfig = {
           const deleteBtn = document.createElement('button');
           deleteBtn.className = 'delete';
           deleteBtn.innerHTML = '🗑️';
-          deleteBtn.title = 'Apagar';
-          deleteBtn.onclick = () => remove(ref(db, `tarefas_bosu/${id}`));
-          actionsDiv.appendChild(deleteBtn);
-        }
+          deleteBtn.title = 'Concluir e Registar na Google Sheet';
+          deleteBtn.onclick = () => {
+            const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbyUCCnNtvDGk2nHiW36o2xKaZOXZeDBJpB23-FsRliK5F2vSH2pXLDnzuPqa5ttF3MVSg/exec";
+
+            // Envia os dados para a Google Sheet em segundo plano
+            fetch(URL_GOOGLE_SCRIPT, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ texto: item.text })
+            }).catch(err => console.error("Erro ao enviar para a Google Sheet:", err));
+
+            // Apaga da lista ativa do ecrã (Firebase)
+            remove(ref(db, `tarefas_bosu/${id}`));
+          };
 
         div.appendChild(textSpan);
         if (temAcessoEscrita) div.appendChild(actionsDiv);
