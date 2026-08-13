@@ -294,12 +294,12 @@ const firebaseConfig = {
           const deleteBtn = document.createElement('button');
           deleteBtn.className = 'delete';
           deleteBtn.innerHTML = '🗑️';
-          deleteBtn.title = 'Concluir e Registar na Google Sheet';
+          deleteBtn.title = 'Apagar';
           deleteBtn.onclick = () => {
-            // INSIRA O SEU URL DO APPS SCRIPT ENTRE AS ASPAS
             const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbyUCCnNtvDGk2nHiW36o2xKaZOXZeDBJpB23-FsRliK5F2vSH2pXLDnzuPqa5ttF3MVSg/exec";
 
-            if (URL_GOOGLE_SCRIPT && !URL_GOOGLE_SCRIPT.includes("COLE_AQUI")) {
+            // Envia para o Sheets APENAS se o item estiver na coluna "Feito" (done)
+            if (item.status === 'done' && URL_GOOGLE_SCRIPT && !URL_GOOGLE_SCRIPT.includes("COLE_AQUI")) {
               fetch(URL_GOOGLE_SCRIPT, {
                 method: 'POST',
                 mode: 'no-cors',
@@ -308,7 +308,7 @@ const firebaseConfig = {
               }).catch(err => console.error("Erro ao enviar para a Google Sheet:", err));
             }
 
-            // Elimina o item do Firebase para sair do ecrã
+            // Elimina o item do Firebase em qualquer um dos casos
             remove(ref(db, `tarefas_bosu/${id}`));
           };
 
