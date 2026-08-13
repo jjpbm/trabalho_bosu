@@ -3,9 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Trabalho BOSU</title>
+  <title>BOSU</title>
   <style>
-    /* Layout do Cabeçalho alinhado ao centro */
+    /* Reset e Fonte Moderna Global */
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; 
+    }
+
+    html, body {
+      height: 100%;
+      background-color: #0f172a; 
+      color: #f8fafc;
+    }
+
+    body { 
+      display: flex; 
+      flex-direction: column; 
+      min-height: 100vh;
+    }
+
     /* Cabeçalho Limpo e Centrado */
     header { 
       background: #1e293b; 
@@ -31,25 +50,46 @@
       margin-left: auto;
     }
 
-    /* Rodapé (Footer) com Hora e Contacto */
-    footer {
-      background: #1e293b;
-      padding: 12px 24px;
-      border-top: 1px solid #334155;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.95rem;
+    /* Controis e Formulário */
+    .controls { 
+      background: #1e293b; 
+      padding: 16px 24px; 
+      border-bottom: 1px solid #334155; 
+      display: flex; 
+      gap: 12px; 
+      flex-wrap: wrap; 
     }
+    .controls input[type="text"] { 
+      flex: 1; 
+      min-width: 220px; 
+      padding: 12px 16px; 
+      border: 1px solid #475569; 
+      border-radius: 8px; 
+      background: #0f172a; 
+      color: white; 
+      font-size: 1rem; 
+    }
+    .controls select { 
+      padding: 12px 16px; 
+      border: 1px solid #475569; 
+      border-radius: 8px; 
+      background: #0f172a; 
+      color: white; 
+      font-size: 1rem; 
+    }
+    .controls button.add-btn { 
+      background: #10b981; 
+      color: white; 
+      border: none; 
+      padding: 12px 24px; 
+      border-radius: 8px; 
+      font-weight: 700; 
+      cursor: pointer; 
+      font-size: 1rem; 
+    }
+    .controls button.add-btn:hover { background: #059669; }
 
-    #clockDisplay { color: #38bdf8; font-weight: 700; font-size: 1.1rem; letter-spacing: 0.5px; }
-    .phone-info { background: #0f172a; padding: 6px 14px; border-radius: 6px; color: #f1f5f9; font-weight: 500; border: 1px solid #334155; }}
-    * { 
-      box-sizing: border-box; 
-      margin: 0; 
-      padding: 0; 
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; 
-    }
+    /* Botão de Ecrã Inteiro */
     .btn-fs { 
       background: #0284c7; 
       color: white; 
@@ -59,42 +99,87 @@
       cursor: pointer; 
       font-weight: 600; 
       font-size: 1rem; 
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: background 0.2s;
+      display: flex; 
+      align-items: center; 
+      gap: 6px; 
+      transition: background 0.2s; 
     }
     .btn-fs:hover { background: #0369a1; }
-    .controls { background: #1e293b; padding: 16px 24px; border-bottom: 1px solid #334155; display: flex; gap: 12px; flex-wrap: wrap; }
-    .controls input[type="text"] { flex: 1; min-width: 220px; padding: 12px 16px; border: 1px solid #475569; border-radius: 8px; background: #0f172a; color: white; font-size: 1rem; }
-    .controls select { padding: 12px 16px; border: 1px solid #475569; border-radius: 8px; background: #0f172a; color: white; font-size: 1rem; }
-    .controls button.add-btn { background: #10b981; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 1rem; }
-    .controls button.add-btn:hover { background: #059669; }
-    .board { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding: 24px; flex: 1; }
+    
+    /* Quadro de Colunas */
+    .board { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 24px; 
+      padding: 24px; 
+      flex: 1; 
+    }
     @media (max-width: 768px) { .board { grid-template-columns: 1fr; } }
-    .column { background: #1e293b; border-radius: 12px; padding: 20px; border: 1px solid #334155; display: flex; flex-direction: column; }
-    .column-header { font-size: 1.4rem; font-weight: 700; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 3px solid; text-transform: uppercase; letter-spacing: 1px; }
+    
+    .column { 
+      background: #1e293b; 
+      border-radius: 12px; 
+      padding: 20px; 
+      border: 1px solid #334155; 
+      display: flex; 
+      flex-direction: column; 
+    }
+    .column-header { 
+      font-size: 1.4rem; 
+      font-weight: 700; 
+      margin-bottom: 20px; 
+      padding-bottom: 12px; 
+      border-bottom: 3px solid; 
+      text-transform: uppercase; 
+      letter-spacing: 1px; 
+    }
     .col-todo .column-header { border-color: #f97316; color: #fb923c; }
     .col-done .column-header { border-color: #10b981; color: #34d399; }
+    
     .card-list { display: flex; flex-direction: column; gap: 12px; flex: 1; }
-    .card { background: #334155; padding: 16px 20px; border-radius: 8px; font-size: 1.25rem; font-weight: 500; display: flex; justify-content: space-between; align-items: center; word-break: break-word; border-left: 5px solid #64748b; }
+    .card { 
+      background: #334155; 
+      padding: 16px 20px; 
+      border-radius: 8px; 
+      font-size: 1.25rem; 
+      font-weight: 500; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      word-break: break-word; 
+      border-left: 5px solid #64748b; 
+    }
     .col-todo .card { border-left-color: #f97316; }
     .col-done .card { border-left-color: #10b981; }
     .card-actions { display: flex; gap: 8px; }
     .card-actions button { border: none; background: #475569; color: white; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem; }
     .card-actions button.delete { background: #ef4444; }
+
+    /* Rodapé */
+    footer {
+      background: #1e293b;
+      padding: 12px 24px;
+      border-top: 1px solid #334155;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+    }
+    #clockDisplay { color: #38bdf8; font-weight: 700; font-size: 1.1rem; letter-spacing: 0.5px; }
+    .phone-info { background: #0f172a; padding: 6px 14px; border-radius: 6px; color: #f1f5f9; font-weight: 500; border: 1px solid #334155; font-size: 0.95rem; }
   </style>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getDatabase, ref, push, onValue, remove,  } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
-    // IMPORTANTE: Adicionada a importação do serviço de Autenticação
+    import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
     import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
     const SENHA_CORRETA = "bosu123"; 
 
-    // 2. CONFIGURAÇÃO DO FIREBASE (Mantenha as suas chaves aqui)
-    const firebaseConfig = {
-      apiKey: "AIzaSyASiNTd_r5CzxxgxQNuBL5UPtVjI5HpDcE",
+    // INSIRA AQUI AS SUAS CHAVES DO FIREBASE
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyASiNTd_r5CzxxgxQNuBL5UPtVjI5HpDcE",
   authDomain: "trabalho-bosu.firebaseapp.com",
   databaseURL: "https://trabalho-bosu-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "trabalho-bosu",
@@ -102,82 +187,68 @@
   messagingSenderId: "798452896445",
   appId: "1:798452896445:web:c1ee684a8ed2e076915dd4",
   measurementId: "G-L82P8EPRKY"
-    };
+};
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const auth = getAuth(app);
 
-    // Login silencioso automático
-    signInAnonymously(auth).catch((error) => {
-      console.error("Erro na autenticação anónima:", error);
-    });
+    signInAnonymously(auth).catch(err => console.error(err));
 
     const tasksRef = ref(db, 'tarefas_bosu');
 
-    // Validação da Palavra-Passe ao entrar
     let temAcessoEscrita = false;
-    const senhaIntroduzida = prompt("Por favor, introduza a palavra-passe para gerir a lista:");
+    const senhaIntroduzida = prompt("Introduza a palavra-passe para gerir a lista:");
 
     if (senhaIntroduzida === SENHA_CORRETA) {
       temAcessoEscrita = true;
     } else {
-      alert("Palavra-passe incorreta ou cancelada. O site ficará no Modo de Apenas Leitura.");
-      // Esconde a barra de inserção de tarefas se não tiver acesso
-      document.addEventListener("DOMContentLoaded", () => {
-        const controlsDiv = document.querySelector('.controls');
-        if (controlsDiv) controlsDiv.style.display = 'none';
-      });
+      alert("Modo de Apenas Leitura ativado.");
     }
 
     document.addEventListener("DOMContentLoaded", () => {
+      // Ocultar barra de controlo no modo leitura
+      if (!temAcessoEscrita) {
+        const controlsDiv = document.querySelector('.controls');
+        if (controlsDiv) controlsDiv.style.display = 'none';
+      }
+
+      // Relógio em Tempo Real no Rodapé (HH:MM)
+      function updateClock() {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+        const clockElem = document.getElementById('clockDisplay');
+        if (clockElem) clockElem.textContent = timeStr;
+      }
+      setInterval(updateClock, 1000);
+      updateClock();
+
+      // Controlo de Ecrã Inteiro
+      const btnFs = document.getElementById('btnFullscreen');
+      btnFs.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(err => console.error(err));
+        } else {
+          if (document.exitFullscreen) document.exitFullscreen();
+        }
+      });
+
+      document.addEventListener('fullscreenchange', () => {
+        if (document.fullscreenElement) {
+          btnFs.innerHTML = '🗗';
+          btnFs.title = 'Sair de Ecrã Inteiro';
+        } else {
+          btnFs.innerHTML = '⛶ Ecrã Inteiro';
+          btnFs.title = 'Entrar em Ecrã Inteiro';
+        }
+      });
+
+      // Ações do Formulário
       const taskInput = document.getElementById('taskInput');
       const statusSelect = document.getElementById('statusSelect');
       const addBtn = document.getElementById('addBtn');
       const todoList = document.getElementById('todoList');
       const doneList = document.getElementById('doneList');
-      // Função para atualizar o relógio em tempo real
-      // Relógio em Tempo Real (Apenas Horas e Minutos)
-      // Relógio em Tempo Real (Apenas Horas e Minutos)
-      function updateClock() {
-        const now = new Date();
-        const timeStr = now.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
-        const clockElem = document.getElementById('clockDisplay');
-        if (clockElem) {
-          clockElem.textContent = timeStr;
-        }
-      }
-
-      // ESTAS DUAS LINHAS SÃO OBRIGATÓRIAS PARA ATIVAR O RELÓGIO:
-      setInterval(updateClock, 1000); // Atualiza a cada segundo
-      updateClock();                  // Executa logo ao abrir a página
-      const btnFs = document.getElementById('btnFullscreen');
-
-  // Alternar entre Entrar e Sair de Ecrã Inteiro ao clicar
-  btnFs.addEventListener('click', () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(err => {
-        console.error(`Erro ao tentar entrar em ecrã inteiro: ${err.message}`);
-      });
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      }
-    }
-  });
-
-  // Detetar quando o estado do ecrã inteiro muda (mesmo via tecla ESC)
-  document.addEventListener('fullscreenchange', () => {
-    if (document.fullscreenElement) {
-      // Quando ESTÁ em ecrã inteiro: mostra apenas o ícone de sair
-      btnFs.innerHTML = '🗗'; 
-      btnFs.title = 'Sair de Ecrã Inteiro';
-    } else {
-      // Quando NÃO está em ecrã inteiro: volta ao estado inicial
-      btnFs.innerHTML = '⛶ Ecrã Inteiro';
-      btnFs.title = 'Entrar em Ecrã Inteiro';
-    }
-  });
 
       if (addBtn && temAcessoEscrita) {
         addBtn.addEventListener('click', () => {
@@ -188,7 +259,6 @@
         });
       }
 
-      // Leitura de dados em tempo real (visível para todos)
       onValue(tasksRef, (snapshot) => {
         todoList.innerHTML = '';
         doneList.innerHTML = '';
@@ -211,7 +281,6 @@
         const actionsDiv = document.createElement('div');
         actionsDiv.className = 'card-actions';
 
-        // Apenas adiciona botões de ação se o utilizador tiver introduzido a palavra-passe correta
         if (temAcessoEscrita) {
           if (item.status === 'todo') {
             const moveBtn = document.createElement('button');
@@ -229,29 +298,30 @@
         }
 
         div.appendChild(textSpan);
-        if (temAcessoEscrita) {
-          div.appendChild(actionsDiv);
-        }
+        if (temAcessoEscrita) div.appendChild(actionsDiv);
         return div;
       }
     });
   </script>
 </head>
 <body>
+
   <header>
     <h1>Trabalho BOSU</h1>
     <div class="header-right">
       <button class="btn-fs" id="btnFullscreen">⛶ Ecrã Inteiro</button>
     </div>
   </header>
+
   <div class="controls">
-    <input type="text" id="taskInput" placeholder="Escreva a tarefa ou palavra..." />
+    <input type="text" id="taskInput" placeholder="Escreva a palavra..." />
     <select id="statusSelect">
       <option value="todo">Por Fazer</option>
       <option value="done">Feito</option>
     </select>
     <button class="add-btn" id="addBtn">Adicionar</button>
   </div>
+
   <div class="board">
     <div class="column col-todo">
       <div class="column-header">Por Fazer</div>
@@ -262,9 +332,11 @@
       <div class="card-list" id="doneList"></div>
     </div>
   </div>
+
   <footer>
     <span class="phone-info">📞 Anestesia: 31615</span>
     <span id="clockDisplay">--:--</span>
   </footer>
+
 </body>
 </html>
