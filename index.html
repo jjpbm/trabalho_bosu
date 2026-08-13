@@ -294,19 +294,23 @@ const firebaseConfig = {
           deleteBtn.innerHTML = '🗑️';
           deleteBtn.title = 'Concluir e Registar na Google Sheet';
           deleteBtn.onclick = () => {
+            // Cole aqui o seu URL do Apps Script entre as aspas
             const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbyUCCnNtvDGk2nHiW36o2xKaZOXZeDBJpB23-FsRliK5F2vSH2pXLDnzuPqa5ttF3MVSg/exec";
 
-            // Envia os dados para a Google Sheet em segundo plano
+            // Envia para a Google Sheet
             fetch(URL_GOOGLE_SCRIPT, {
               method: 'POST',
               mode: 'no-cors',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ texto: item.text })
-            }).catch(err => console.error("Erro ao enviar para a Google Sheet:", err));
+            }).catch(err => console.error("Erro ao enviar para o Sheets:", err));
 
-            // Apaga da lista ativa do ecrã (Firebase)
+            // Apaga da lista ativa do ecrã
             remove(ref(db, `tarefas_bosu/${id}`));
           };
+          
+          actionsDiv.appendChild(deleteBtn);
+        }
 
         div.appendChild(textSpan);
         if (temAcessoEscrita) div.appendChild(actionsDiv);
