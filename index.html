@@ -5,6 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Trabalho BOSU</title>
   <style>
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .header-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      font-size: 0.95rem;
+    }
+
+    #clockDisplay {
+      color: #38bdf8;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .phone-info {
+      background: #334155;
+      padding: 4px 10px;
+      border-radius: 6px;
+      color: #f1f5f9;
+      font-weight: 500;
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     body { background-color: #0f172a; color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; }
     header { background: #1e293b; padding: 18px 24px; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; }
@@ -95,6 +122,29 @@
       const addBtn = document.getElementById('addBtn');
       const todoList = document.getElementById('todoList');
       const doneList = document.getElementById('doneList');
+      // Função para atualizar o relógio em tempo real
+      function updateClock() {
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('pt-PT', { 
+          weekday: 'short', 
+          day: '2-digit', 
+          month: '2-digit', 
+          year: 'numeric' 
+        });
+        const timeStr = now.toLocaleTimeString('pt-PT', { 
+          hour: '2-digit', 
+          minute: '2-digit', 
+          second: '2-digit' 
+        });
+        
+        const clockElem = document.getElementById('clockDisplay');
+        if (clockElem) {
+          clockElem.textContent = `${dateStr} | ${timeStr}`;
+        }
+      }
+
+      setInterval(updateClock, 1000);
+      updateClock(); // Executa imediatamente ao carregar
       const btnFs = document.getElementById('btnFullscreen');
 
   // Alternar entre Entrar e Sair de Ecrã Inteiro ao clicar
@@ -183,7 +233,13 @@
 </head>
 <body>
   <header>
-    <h1>Trabalho BOSU</h1>
+    <div class="header-left">
+      <h1>BOSU</h1>
+      <div class="header-info">
+        <span id="clockDisplay">--:--:--</span>
+        <span class="phone-info">📞 Ext. / Contacto: 31615</span>
+      </div>
+    </div>
     <button class="btn-fs" id="btnFullscreen">⛶ Ecrã Inteiro</button>
   </header>
   <div class="controls">
