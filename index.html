@@ -137,21 +137,19 @@
       const doneList = document.getElementById('doneList');
       // Função para atualizar o relógio em tempo real
       // Relógio em Tempo Real (Apenas Horas e Minutos)
+      // Relógio em Tempo Real (Apenas Horas e Minutos)
       function updateClock() {
         const now = new Date();
         const timeStr = now.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
         const clockElem = document.getElementById('clockDisplay');
-        if (clockElem) clockElem.textContent = timeStr;
-      }
-        
-        const clockElem = document.getElementById('clockDisplay');
         if (clockElem) {
-          clockElem.textContent = `${dateStr} | ${timeStr}`;
+          clockElem.textContent = timeStr;
         }
       }
 
-      setInterval(updateClock, 1000);
-      updateClock(); // Executa imediatamente ao carregar
+      // ESTAS DUAS LINHAS SÃO OBRIGATÓRIAS PARA ATIVAR O RELÓGIO:
+      setInterval(updateClock, 1000); // Atualiza a cada segundo
+      updateClock();                  // Executa logo ao abrir a página
       const btnFs = document.getElementById('btnFullscreen');
 
   // Alternar entre Entrar e Sair de Ecrã Inteiro ao clicar
