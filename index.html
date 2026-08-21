@@ -25,10 +25,11 @@
       min-height: 100vh;
     }
 
-    /* Cabeçalho Limpo e Centrado */
+    /* --- BASE: TELEMÓVEL / MODO COMPACTO --- */
+
     header { 
       background: #1e293b; 
-      padding: 16px 24px; 
+      padding: 14px 18px; 
       border-bottom: 1px solid #334155; 
       display: flex;
       justify-content: space-between;
@@ -37,7 +38,7 @@
     }
     
     header h1 { 
-      font-size: 1.8rem; 
+      font-size: 1.6rem; 
       font-weight: 700; 
       color: #38bdf8; 
       letter-spacing: 1px; 
@@ -46,23 +47,20 @@
       transform: translateX(-50%);
     }
     
-    .header-right {
-      margin-left: auto;
-    }
+    .header-right { margin-left: auto; }
 
-    /* Controis e Formulário */
     .controls { 
       background: #1e293b; 
-      padding: 16px 24px; 
+      padding: 14px 18px; 
       border-bottom: 1px solid #334155; 
       display: flex; 
-      gap: 12px; 
+      gap: 10px; 
       flex-wrap: wrap; 
     }
     .controls input[type="text"] { 
       flex: 1; 
-      min-width: 220px; 
-      padding: 12px 16px; 
+      min-width: 180px; 
+      padding: 10px 14px; 
       border: 1px solid #475569; 
       border-radius: 8px; 
       background: #0f172a; 
@@ -70,7 +68,7 @@
       font-size: 1rem; 
     }
     .controls select { 
-      padding: 12px 16px; 
+      padding: 10px 14px; 
       border: 1px solid #475569; 
       border-radius: 8px; 
       background: #0f172a; 
@@ -81,15 +79,13 @@
       background: #10b981; 
       color: white; 
       border: none; 
-      padding: 12px 24px; 
+      padding: 10px 20px; 
       border-radius: 8px; 
       font-weight: 700; 
       cursor: pointer; 
       font-size: 1rem; 
     }
-    .controls button.add-btn:hover { background: #059669; }
 
-    /* Botão de Ecrã Inteiro */
     .btn-fs { 
       background: #0284c7; 
       color: white; 
@@ -98,37 +94,33 @@
       border-radius: 8px; 
       cursor: pointer; 
       font-weight: 600; 
-      font-size: 1rem; 
+      font-size: 0.95rem; 
       display: flex; 
       align-items: center; 
       gap: 6px; 
-      transition: background 0.2s; 
     }
-    .btn-fs:hover { background: #0369a1; }
     
-    /* Quadro de Colunas */
     .board { 
       display: grid; 
-      grid-template-columns: 1fr 1fr; 
-      gap: 24px; 
-      padding: 24px; 
+      grid-template-columns: 1fr; 
+      gap: 16px; 
+      padding: 16px; 
       flex: 1; 
     }
-    @media (max-width: 768px) { .board { grid-template-columns: 1fr; } }
     
     .column { 
       background: #1e293b; 
       border-radius: 12px; 
-      padding: 20px; 
+      padding: 16px; 
       border: 1px solid #334155; 
       display: flex; 
       flex-direction: column; 
     }
     .column-header { 
-      font-size: 1.4rem; 
+      font-size: 1.3rem; 
       font-weight: 700; 
-      margin-bottom: 20px; 
-      padding-bottom: 12px; 
+      margin-bottom: 16px; 
+      padding-bottom: 10px; 
       border-bottom: 3px solid; 
       text-transform: uppercase; 
       letter-spacing: 1px; 
@@ -137,49 +129,127 @@
     .col-done .column-header { border-color: #10b981; color: #34d399; }
     
     .card-list { display: flex; flex-direction: column; gap: 12px; flex: 1; }
+    
+    /* Cartões */
     .card { 
       background: #334155; 
-      padding: 16px 20px; 
+      padding: 14px 18px; 
       border-radius: 8px; 
-      font-size: 1.25rem; 
-      font-weight: 500; 
+      font-size: 1.2rem; 
+      font-weight: 600; 
       display: flex; 
       justify-content: space-between; 
       align-items: center; 
       word-break: break-word; 
-      border-left: 5px solid #64748b; 
+      border-left: 6px solid #64748b; 
+      transition: all 0.3s ease;
+      gap: 12px;
     }
     .col-todo .card { border-left-color: #f97316; }
     .col-done .card { border-left-color: #10b981; }
-    .card-actions { display: flex; gap: 8px; }
-    .card-actions button { border: none; background: #475569; color: white; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem; }
+
+    /* ESTILO: PROCEDIMENTO A DECORRER */
+    .card.running {
+      border-left-color: #38bdf8 !important;
+      background: #1e3a5f !important;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+      border: 1px solid #38bdf8;
+    }
+    .running-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #0284c7;
+      color: #ffffff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 12px;
+      margin-left: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      animation: pulseGlow 1.8s infinite;
+    }
+    @keyframes pulseGlow {
+      0% { opacity: 0.7; transform: scale(0.98); }
+      50% { opacity: 1; transform: scale(1.03); }
+      100% { opacity: 0.7; transform: scale(0.98); }
+    }
+    
+    .card-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+    .card-actions button { 
+      border: none; 
+      background: #475569; 
+      color: white; 
+      padding: 8px 12px; 
+      border-radius: 6px; 
+      cursor: pointer; 
+      font-weight: 600; 
+      font-size: 0.9rem; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-actions button.btn-play { background: #0284c7; }
+    .card-actions button.btn-play.active { background: #eab308; color: #0f172a; }
+    .card-actions button.btn-reorder { background: #334155; border: 1px solid #475569; padding: 8px 10px; }
+    .card-actions button.btn-move { background: #10b981; }
     .card-actions button.delete { background: #ef4444; }
 
-    /* Rodapé */
     footer {
       background: #1e293b;
-      padding: 12px 24px;
+      padding: 12px 18px;
       border-top: 1px solid #334155;
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-top: auto;
     }
-    #clockDisplay { color: #38bdf8; font-weight: 700; font-size: 1.1rem; letter-spacing: 0.5px; }
-    .phone-info { background: #0f172a; padding: 6px 14px; border-radius: 6px; color: #f1f5f9; font-weight: 500; border: 1px solid #334155; font-size: 0.95rem; }
+    #clockDisplay { color: #38bdf8; font-weight: 700; font-size: 1.1rem; }
+    .phone-info { background: #0f172a; padding: 6px 12px; border-radius: 6px; color: #f1f5f9; font-weight: 500; border: 1px solid #334155; font-size: 0.95rem; }
+
+
+    /* --- MODO BLOCO OPERATÓRIO / TV (Ecrãs > 900px) --- */
+    @media (min-width: 900px) {
+      .board { grid-template-columns: 1fr 1fr; gap: 28px; padding: 28px; }
+      header { padding: 20px 32px; }
+      header h1 { font-size: 2.6rem; }
+      
+      .controls { padding: 18px 32px; gap: 14px; }
+      .controls input[type="text"], .controls select, .controls button.add-btn { 
+        font-size: 1.3rem; 
+        padding: 14px 20px; 
+      }
+      .btn-fs { font-size: 1.1rem; padding: 10px 18px; }
+
+      .column { padding: 24px; border-radius: 16px; }
+      .column-header { font-size: 2rem; margin-bottom: 20px; }
+      
+      .card { 
+        font-size: 1.9rem; 
+        padding: 20px 24px; 
+        border-radius: 12px; 
+        border-left-width: 10px; 
+      }
+      .running-tag { font-size: 1rem; padding: 4px 12px; }
+      .card-actions button { font-size: 1.1rem; padding: 10px 16px; }
+
+      footer { padding: 16px 32px; }
+      #clockDisplay { font-size: 1.8rem; font-weight: 800; }
+      .phone-info { font-size: 1.4rem; padding: 8px 18px; }
+    }
   </style>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+    import { getDatabase, ref, push, onValue, remove, update, get, set } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
     import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
     const SENHA_CORRETA = "bosu123"; 
 
-    // INSIRA AQUI AS SUAS CHAVES DO FIREBASE
-    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyASiNTd_r5CzxxgxQNuBL5UPtVjI5HpDcE",
+    // INSIRA AS SUAS CHAVES DO FIREBASE
+    const firebaseConfig = {
+      apiKey: "AIzaSyASiNTd_r5CzxxgxQNuBL5UPtVjI5HpDcE",
   authDomain: "trabalho-bosu.firebaseapp.com",
   databaseURL: "https://trabalho-bosu-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "trabalho-bosu",
@@ -187,7 +257,7 @@ const firebaseConfig = {
   messagingSenderId: "798452896445",
   appId: "1:798452896445:web:c1ee684a8ed2e076915dd4",
   measurementId: "G-L82P8EPRKY"
-};
+    };
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
@@ -213,7 +283,7 @@ const firebaseConfig = {
         if (controlsDiv) controlsDiv.style.display = 'none';
       }
 
-      // Relógio em Tempo Real no Rodapé (HH:MM)
+      // Relógio
       function updateClock() {
         const now = new Date();
         const timeStr = now.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
@@ -223,7 +293,7 @@ const firebaseConfig = {
       setInterval(updateClock, 1000);
       updateClock();
 
-      // Controlo de Ecrã Inteiro
+      // Fullscreen
       const btnFs = document.getElementById('btnFullscreen');
       btnFs.addEventListener('click', () => {
         if (!document.fullscreenElement) {
@@ -233,17 +303,7 @@ const firebaseConfig = {
         }
       });
 
-      document.addEventListener('fullscreenchange', () => {
-        if (document.fullscreenElement) {
-          btnFs.innerHTML = '🗗';
-          btnFs.title = 'Sair de Ecrã Inteiro';
-        } else {
-          btnFs.innerHTML = '⛶ Ecrã Inteiro';
-          btnFs.title = 'Entrar em Ecrã Inteiro';
-        }
-      });
-
-      // Ações do Formulário
+      // Formulário Adicionar
       const taskInput = document.getElementById('taskInput');
       const statusSelect = document.getElementById('statusSelect');
       const addBtn = document.getElementById('addBtn');
@@ -254,43 +314,98 @@ const firebaseConfig = {
         addBtn.addEventListener('click', () => {
           const text = taskInput.value.trim();
           if (!text) return;
-          push(tasksRef, { text, status: statusSelect.value, timestamp: Date.now() });
+          push(tasksRef, { 
+            text, 
+            status: statusSelect.value, 
+            isRunning: false,
+            order: Date.now(), 
+            timestamp: Date.now() 
+          });
           taskInput.value = '';
         });
       }
 
+      // Renderização com Ordenação e Destaque
       onValue(tasksRef, (snapshot) => {
         todoList.innerHTML = '';
         doneList.innerHTML = '';
         const data = snapshot.val();
+        
         if (data) {
-          Object.keys(data).forEach(key => {
-            const item = data[key];
-            const card = createCardElement(key, item);
-            if (item.status === 'todo') todoList.appendChild(card);
-            else doneList.appendChild(card);
+          const items = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+          
+          // Ordena pelo campo 'order' (ou por data de criação)
+          items.sort((a, b) => (a.order || a.timestamp || 0) - (b.order || b.timestamp || 0));
+
+          const todoItems = items.filter(item => item.status === 'todo');
+          const doneItems = items.filter(item => item.status === 'done');
+
+          todoItems.forEach((item, index) => {
+            todoList.appendChild(createCardElement(item.id, item, index, todoItems));
+          });
+
+          doneItems.forEach((item, index) => {
+            doneList.appendChild(createCardElement(item.id, item, index, doneItems));
           });
         }
       });
 
-      function createCardElement(id, item) {
+      function createCardElement(id, item, index, listArray) {
         const div = document.createElement('div');
-        div.className = 'card';
-        const textSpan = document.createElement('span');
-        textSpan.textContent = item.text;
+        div.className = 'card' + (item.isRunning ? ' running' : '');
+        
+        const contentSpan = document.createElement('span');
+        contentSpan.textContent = item.text;
+
+        if (item.isRunning) {
+          const tag = document.createElement('span');
+          tag.className = 'running-tag';
+          tag.innerHTML = '● A decorrer';
+          contentSpan.appendChild(tag);
+        }
+
         const actionsDiv = document.createElement('div');
         actionsDiv.className = 'card-actions';
 
         if (temAcessoEscrita) {
-          // Se for "Por Fazer", mostra o botão de mover para "Feito"
+          // Ações exclusivas para "Por Fazer"
           if (item.status === 'todo') {
+            // 1. Botão Play / Pausa (A Decorrer)
+            const playBtn = document.createElement('button');
+            playBtn.className = 'btn-play' + (item.isRunning ? ' active' : '');
+            playBtn.innerHTML = item.isRunning ? '⏸️' : '▶️';
+            playBtn.title = item.isRunning ? 'Pausar / Retirar de curso' : 'Marcar como A Decorrer';
+            playBtn.onclick = () => update(ref(db, `tarefas_bosu/${id}`), { isRunning: !item.isRunning });
+            actionsDiv.appendChild(playBtn);
+
+            // 2. Botões Subir / Descer Ordem
+            if (index > 0) {
+              const upBtn = document.createElement('button');
+              upBtn.className = 'btn-reorder';
+              upBtn.innerHTML = '⬆️';
+              upBtn.title = 'Subir prioridade';
+              upBtn.onclick = () => swapOrder(item, listArray[index - 1]);
+              actionsDiv.appendChild(upBtn);
+            }
+
+            if (index < listArray.length - 1) {
+              const downBtn = document.createElement('button');
+              downBtn.className = 'btn-reorder';
+              downBtn.innerHTML = '⬇️';
+              downBtn.title = 'Descer prioridade';
+              downBtn.onclick = () => swapOrder(item, listArray[index + 1]);
+              actionsDiv.appendChild(downBtn);
+            }
+
+            // 3. Mover para Feito
             const moveBtn = document.createElement('button');
-            moveBtn.textContent = '➔ Mover p/ Feito';
-            moveBtn.onclick = () => update(ref(db, `tarefas_bosu/${id}`), { status: 'done' });
+            moveBtn.className = 'btn-move';
+            moveBtn.textContent = '➔ Feito';
+            moveBtn.onclick = () => update(ref(db, `tarefas_bosu/${id}`), { status: 'done', isRunning: false });
             actionsDiv.appendChild(moveBtn);
           }
 
-          // Botão de Apagar (Regista no Google Sheets e Remove do Firebase)
+          // Botão Apagar
           const deleteBtn = document.createElement('button');
           deleteBtn.className = 'delete';
           deleteBtn.innerHTML = '🗑️';
@@ -298,7 +413,7 @@ const firebaseConfig = {
           deleteBtn.onclick = () => {
             const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbyUCCnNtvDGk2nHiW36o2xKaZOXZeDBJpB23-FsRliK5F2vSH2pXLDnzuPqa5ttF3MVSg/exec";
 
-            // Envia para o Sheets APENAS se o item estiver na coluna "Feito" (done)
+            // Envia para o Sheets APENAS se for apagado da coluna "Feito"
             if (item.status === 'done' && URL_GOOGLE_SCRIPT && !URL_GOOGLE_SCRIPT.includes("COLE_AQUI")) {
               fetch(URL_GOOGLE_SCRIPT, {
                 method: 'POST',
@@ -308,16 +423,27 @@ const firebaseConfig = {
               }).catch(err => console.error("Erro ao enviar para a Google Sheet:", err));
             }
 
-            // Elimina o item do Firebase em qualquer um dos casos
             remove(ref(db, `tarefas_bosu/${id}`));
           };
-
           actionsDiv.appendChild(deleteBtn);
         }
 
-        div.appendChild(textSpan);
+        div.appendChild(contentSpan);
         if (temAcessoEscrita) div.appendChild(actionsDiv);
         return div;
+      }
+
+      // Função para trocar a ordem de dois cartões
+      function swapOrder(itemA, itemB) {
+        const orderA = itemA.order || itemA.timestamp || 0;
+        const orderB = itemB.order || itemB.timestamp || 0;
+
+        // Se tiverem o mesmo valor, cria uma ligeira separação
+        const newOrderA = (orderA === orderB) ? orderB + 1 : orderB;
+        const newOrderB = orderA;
+
+        update(ref(db, `tarefas_bosu/${itemA.id}`), { order: newOrderA });
+        update(ref(db, `tarefas_bosu/${itemB.id}`), { order: newOrderB });
       }
     });
   </script>
@@ -325,14 +451,14 @@ const firebaseConfig = {
 <body>
 
   <header>
-    <h1>Trabalho BOSU</h1>
+    <h1>BOSU</h1>
     <div class="header-right">
       <button class="btn-fs" id="btnFullscreen">⛶ Ecrã Inteiro</button>
     </div>
   </header>
 
   <div class="controls">
-    <input type="text" id="taskInput" placeholder="Escreva a palavra..." />
+    <input type="text" id="taskInput" placeholder="Escreva o procedimento..." />
     <select id="statusSelect">
       <option value="todo">Por Fazer</option>
       <option value="done">Feito</option>
