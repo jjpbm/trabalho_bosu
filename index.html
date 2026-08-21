@@ -165,10 +165,11 @@
       font-weight: 700;
       padding: 3px 8px;
       border-radius: 12px;
-      margin-left: 10px;
+      margin-left: auto; /* Empurra o distintivo totalmente para a direita */
       text-transform: uppercase;
       letter-spacing: 0.5px;
       animation: pulseGlow 1.8s infinite;
+      white-space: nowrap;
     }
     @keyframes pulseGlow {
       0% { opacity: 0.7; transform: scale(0.98); }
@@ -355,12 +356,15 @@
         div.className = 'card' + (item.isRunning ? ' running' : '');
         
         const contentSpan = document.createElement('span');
+        contentSpan.style.display = 'flex';
+        contentSpan.style.alignItems = 'center';
+        contentSpan.style.flex = '1';
         contentSpan.textContent = item.text;
 
         if (item.isRunning) {
           const tag = document.createElement('span');
           tag.className = 'running-tag';
-          tag.innerHTML = '● A decorrer';
+          tag.innerHTML = '● a decorrer';
           contentSpan.appendChild(tag);
         }
 
