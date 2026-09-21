@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BOSU</title>
+  <title>Trabalho BOSU</title>
   <style>
-    /* Reset e Fonte Moderna Global */
+    /* Reset e Tipografia Global */
     * { 
       box-sizing: border-box; 
       margin: 0; 
@@ -14,7 +14,7 @@
     }
 
     html, body {
-      height: 100%;
+      min-height: 100%;
       background-color: #0f172a; 
       color: #f8fafc;
     }
@@ -25,33 +25,75 @@
       min-height: 100vh;
     }
 
-    /* --- BASE: TELEMÓVEL / MODO COMPACTO --- */
-
+    /* --- CABEÇALHO (Compacto / Telemóvel) --- */
     header { 
       background: #1e293b; 
-      padding: 14px 18px; 
-      border-bottom: 1px solid #334155; 
+      padding: 12px 16px; 
+      border-bottom: 2px solid #334155; 
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      position: relative;
+      gap: 10px;
     }
     
     header h1 { 
-      font-size: 1.6rem; 
-      font-weight: 700; 
+      font-size: 1.5rem; 
+      font-weight: 800; 
       color: #38bdf8; 
       letter-spacing: 1px; 
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
     }
     
-    .header-right { margin-left: auto; }
+    .header-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
 
+    .phone-info { 
+      background: #0f172a; 
+      padding: 6px 12px; 
+      border-radius: 8px; 
+      color: #f1f5f9; 
+      font-weight: 600; 
+      border: 1px solid #334155; 
+      font-size: 0.95rem; 
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .phone-icon {
+      color: #ef4444; /* Vermelho vivo */
+      font-size: 1.1rem;
+    }
+
+    #clockDisplay { 
+      color: #38bdf8; 
+      font-weight: 800; 
+      font-size: 1.2rem; 
+      letter-spacing: 1px;
+    }
+
+    .btn-fs { 
+      background: #0284c7; 
+      color: white; 
+      border: none; 
+      padding: 6px 12px; 
+      border-radius: 6px; 
+      cursor: pointer; 
+      font-weight: 600; 
+      font-size: 0.85rem; 
+      display: flex; 
+      align-items: center; 
+      gap: 6px; 
+    }
+    .btn-fs:hover { background: #0369a1; }
+
+    /* Controlos e Formulário */
     .controls { 
       background: #1e293b; 
-      padding: 14px 18px; 
+      padding: 12px 16px; 
       border-bottom: 1px solid #334155; 
       display: flex; 
       gap: 10px; 
@@ -86,20 +128,7 @@
       font-size: 1rem; 
     }
 
-    .btn-fs { 
-      background: #0284c7; 
-      color: white; 
-      border: none; 
-      padding: 8px 14px; 
-      border-radius: 8px; 
-      cursor: pointer; 
-      font-weight: 600; 
-      font-size: 0.95rem; 
-      display: flex; 
-      align-items: center; 
-      gap: 6px; 
-    }
-    
+    /* Colunas */
     .board { 
       display: grid; 
       grid-template-columns: 1fr; 
@@ -130,25 +159,36 @@
     
     .card-list { display: flex; flex-direction: column; gap: 12px; flex: 1; }
     
-    /* Cartões */
+    /* Cartões Adaptativos (sem quebra vertical de letras) */
     .card { 
       background: #334155; 
-      padding: 14px 18px; 
+      padding: 14px 16px; 
       border-radius: 8px; 
       font-size: 1.2rem; 
       font-weight: 600; 
       display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      word-break: break-word; 
+      flex-direction: column; 
+      gap: 12px;
       border-left: 6px solid #64748b; 
       transition: all 0.3s ease;
-      gap: 12px;
+      overflow-wrap: break-word; 
     }
     .col-todo .card { border-left-color: #f97316; }
     .col-done .card { border-left-color: #10b981; }
 
-    /* ESTILO: PROCEDIMENTO A DECORRER */
+    .card-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      gap: 10px;
+    }
+    .card-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* Estado: A Decorrer */
     .card.running {
       border-left-color: #38bdf8 !important;
       background: #1e3a5f !important;
@@ -163,13 +203,13 @@
       color: #ffffff;
       font-size: 0.75rem;
       font-weight: 700;
-      padding: 3px 8px;
+      padding: 4px 10px;
       border-radius: 12px;
-      margin-left: auto; /* Empurra o distintivo totalmente para a direita */
       text-transform: uppercase;
       letter-spacing: 0.5px;
       animation: pulseGlow 1.8s infinite;
       white-space: nowrap;
+      flex-shrink: 0;
     }
     @keyframes pulseGlow {
       0% { opacity: 0.7; transform: scale(0.98); }
@@ -177,7 +217,12 @@
       100% { opacity: 0.7; transform: scale(0.98); }
     }
     
-    .card-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+    .card-actions { 
+      display: flex; 
+      gap: 8px; 
+      align-items: center; 
+      flex-wrap: wrap; 
+    }
     .card-actions button { 
       border: none; 
       background: #475569; 
@@ -186,69 +231,60 @@
       border-radius: 6px; 
       cursor: pointer; 
       font-weight: 600; 
-      font-size: 0.9rem; 
-      display: flex;
+      font-size: 0.95rem; 
+      display: inline-flex;
       align-items: center;
       justify-content: center;
     }
     .card-actions button.btn-play { background: #0284c7; }
     .card-actions button.btn-play.active { background: #eab308; color: #0f172a; }
-    .card-actions button.btn-reorder { background: #334155; border: 1px solid #475569; padding: 8px 10px; }
+    .card-actions button.btn-edit { background: #64748b; }
+    .card-actions button.btn-reorder { background: #334155; border: 1px solid #475569; }
     .card-actions button.btn-move { background: #10b981; }
     .card-actions button.delete { background: #ef4444; }
 
-    footer {
-      background: #1e293b;
-      padding: 12px 18px;
-      border-top: 1px solid #334155;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: auto;
-    }
-    #clockDisplay { color: #38bdf8; font-weight: 700; font-size: 1.1rem; }
-    .phone-info { background: #0f172a; padding: 6px 12px; border-radius: 6px; color: #f1f5f9; font-weight: 500; border: 1px solid #334155; font-size: 0.95rem; }
-
-
-    /* --- MODO BLOCO OPERATÓRIO / TV (Ecrãs > 900px) --- */
+    /* --- MODO BLOCO OPERATÓRIO / TV (> 900px) --- */
     @media (min-width: 900px) {
-      .board { grid-template-columns: 1fr 1fr; gap: 28px; padding: 28px; }
-      header { padding: 20px 32px; }
-      header h1 { font-size: 2.6rem; }
+      header { padding: 18px 32px; }
+      header h1 { font-size: 2.5rem; }
       
-      .controls { padding: 18px 32px; gap: 14px; }
+      .phone-info { font-size: 1.4rem; padding: 8px 18px; }
+      .phone-icon { font-size: 1.5rem; }
+      #clockDisplay { font-size: 1.9rem; margin-left: 12px; }
+      .btn-fs { font-size: 1.1rem; padding: 10px 18px; margin-left: 12px; }
+
+      .controls { padding: 16px 32px; gap: 14px; }
       .controls input[type="text"], .controls select, .controls button.add-btn { 
         font-size: 1.3rem; 
-        padding: 14px 20px; 
+        padding: 12px 18px; 
       }
-      .btn-fs { font-size: 1.1rem; padding: 10px 18px; }
 
+      .board { grid-template-columns: 1fr 1fr; gap: 28px; padding: 28px; }
       .column { padding: 24px; border-radius: 16px; }
       .column-header { font-size: 2rem; margin-bottom: 20px; }
       
       .card { 
+        flex-direction: row; 
+        justify-content: space-between;
+        align-items: center;
         font-size: 1.9rem; 
         padding: 20px 24px; 
         border-radius: 12px; 
         border-left-width: 10px; 
       }
-      .running-tag { font-size: 1rem; padding: 4px 12px; }
+      .running-tag { font-size: 1rem; padding: 5px 14px; }
       .card-actions button { font-size: 1.1rem; padding: 10px 16px; }
-
-      footer { padding: 16px 32px; }
-      #clockDisplay { font-size: 1.8rem; font-weight: 800; }
-      .phone-info { font-size: 1.4rem; padding: 8px 18px; }
     }
   </style>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getDatabase, ref, push, onValue, remove, update, get, set } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+    import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
     import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
     const SENHA_CORRETA = "bosu123"; 
 
-    // INSIRA AS SUAS CHAVES DO FIREBASE
+    // CHAVES DO FIREBASE
     const firebaseConfig = {
       apiKey: "AIzaSyASiNTd_r5CzxxgxQNuBL5UPtVjI5HpDcE",
   authDomain: "trabalho-bosu.firebaseapp.com",
@@ -278,13 +314,13 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-      // Ocultar barra de controlo no modo leitura
+      // Ocultar formulário de inserção no modo leitura
       if (!temAcessoEscrita) {
         const controlsDiv = document.querySelector('.controls');
         if (controlsDiv) controlsDiv.style.display = 'none';
       }
 
-      // Relógio
+      // Relógio no Cabeçalho
       function updateClock() {
         const now = new Date();
         const timeStr = now.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
@@ -294,7 +330,7 @@
       setInterval(updateClock, 1000);
       updateClock();
 
-      // Fullscreen
+      // Botão Ecrã Inteiro
       const btnFs = document.getElementById('btnFullscreen');
       btnFs.addEventListener('click', () => {
         if (!document.fullscreenElement) {
@@ -310,6 +346,8 @@
       const addBtn = document.getElementById('addBtn');
       const todoList = document.getElementById('todoList');
       const doneList = document.getElementById('doneList');
+      const todoHeader = document.getElementById('todoHeader');
+      const doneHeader = document.getElementById('doneHeader');
 
       if (addBtn && temAcessoEscrita) {
         addBtn.addEventListener('click', () => {
@@ -326,20 +364,21 @@
         });
       }
 
-      // Renderização com Ordenação e Destaque
+      // Renderização com Contadores e Ordenação
       onValue(tasksRef, (snapshot) => {
         todoList.innerHTML = '';
         doneList.innerHTML = '';
         const data = snapshot.val();
         
+        let todoItems = [];
+        let doneItems = [];
+
         if (data) {
           const items = Object.keys(data).map(key => ({ id: key, ...data[key] }));
-          
-          // Ordena pelo campo 'order' (ou por data de criação)
           items.sort((a, b) => (a.order || a.timestamp || 0) - (b.order || b.timestamp || 0));
 
-          const todoItems = items.filter(item => item.status === 'todo');
-          const doneItems = items.filter(item => item.status === 'done');
+          todoItems = items.filter(item => item.status === 'todo');
+          doneItems = items.filter(item => item.status === 'done');
 
           todoItems.forEach((item, index) => {
             todoList.appendChild(createCardElement(item.id, item, index, todoItems));
@@ -349,40 +388,60 @@
             doneList.appendChild(createCardElement(item.id, item, index, doneItems));
           });
         }
+
+        // Atualização dos cabeçalhos com o número total
+        todoHeader.textContent = `Por Fazer (${todoItems.length})`;
+        doneHeader.textContent = `Feito (${doneItems.length})`;
       });
 
       function createCardElement(id, item, index, listArray) {
         const div = document.createElement('div');
         div.className = 'card' + (item.isRunning ? ' running' : '');
         
-        const contentSpan = document.createElement('span');
-        contentSpan.style.display = 'flex';
-        contentSpan.style.alignItems = 'center';
-        contentSpan.style.flex = '1';
-        contentSpan.textContent = item.text;
+        const headerRow = document.createElement('div');
+        headerRow.className = 'card-header-row';
+
+        const textSpan = document.createElement('span');
+        textSpan.className = 'card-text';
+        textSpan.textContent = item.text;
+        headerRow.appendChild(textSpan);
 
         if (item.isRunning) {
           const tag = document.createElement('span');
           tag.className = 'running-tag';
-          tag.innerHTML = '● a decorrer';
-          contentSpan.appendChild(tag);
+          tag.innerHTML = '● A decorrer';
+          headerRow.appendChild(tag);
         }
 
-        const actionsDiv = document.createElement('div');
-        actionsDiv.className = 'card-actions';
+        div.appendChild(headerRow);
 
         if (temAcessoEscrita) {
-          // Ações exclusivas para "Por Fazer"
+          const actionsDiv = document.createElement('div');
+          actionsDiv.className = 'card-actions';
+
           if (item.status === 'todo') {
-            // 1. Botão Play / Pausa (A Decorrer)
+            // 1. Play / Pausa
             const playBtn = document.createElement('button');
             playBtn.className = 'btn-play' + (item.isRunning ? ' active' : '');
             playBtn.innerHTML = item.isRunning ? '⏸️' : '▶️';
-            playBtn.title = item.isRunning ? 'Pausar / Retirar de curso' : 'Marcar como A Decorrer';
+            playBtn.title = item.isRunning ? 'Pausar' : 'Marcar como A Decorrer';
             playBtn.onclick = () => update(ref(db, `tarefas_bosu/${id}`), { isRunning: !item.isRunning });
             actionsDiv.appendChild(playBtn);
 
-            // 2. Botões Subir / Descer Ordem
+            // 2. Botão Editar (✏️)
+            const editBtn = document.createElement('button');
+            editBtn.className = 'btn-edit';
+            editBtn.innerHTML = '✏️';
+            editBtn.title = 'Editar procedimento';
+            editBtn.onclick = () => {
+              const novoTexto = prompt("Modificar ou acrescentar informação ao procedimento:", item.text);
+              if (novoTexto !== null && novoTexto.trim() !== "") {
+                update(ref(db, `tarefas_bosu/${id}`), { text: novoTexto.trim() });
+              }
+            };
+            actionsDiv.appendChild(editBtn);
+
+            // 3. Subir / Descer Ordem
             if (index > 0) {
               const upBtn = document.createElement('button');
               upBtn.className = 'btn-reorder';
@@ -401,7 +460,7 @@
               actionsDiv.appendChild(downBtn);
             }
 
-            // 3. Mover para Feito
+            // 4. Mover para Feito
             const moveBtn = document.createElement('button');
             moveBtn.className = 'btn-move';
             moveBtn.textContent = '➔ Feito';
@@ -417,7 +476,6 @@
           deleteBtn.onclick = () => {
             const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbyUCCnNtvDGk2nHiW36o2xKaZOXZeDBJpB23-FsRliK5F2vSH2pXLDnzuPqa5ttF3MVSg/exec";
 
-            // Envia para o Sheets APENAS se for apagado da coluna "Feito"
             if (item.status === 'done' && URL_GOOGLE_SCRIPT && !URL_GOOGLE_SCRIPT.includes("COLE_AQUI")) {
               fetch(URL_GOOGLE_SCRIPT, {
                 method: 'POST',
@@ -430,19 +488,15 @@
             remove(ref(db, `tarefas_bosu/${id}`));
           };
           actionsDiv.appendChild(deleteBtn);
+          div.appendChild(actionsDiv);
         }
 
-        div.appendChild(contentSpan);
-        if (temAcessoEscrita) div.appendChild(actionsDiv);
         return div;
       }
 
-      // Função para trocar a ordem de dois cartões
       function swapOrder(itemA, itemB) {
         const orderA = itemA.order || itemA.timestamp || 0;
         const orderB = itemB.order || itemB.timestamp || 0;
-
-        // Se tiverem o mesmo valor, cria uma ligeira separação
         const newOrderA = (orderA === orderB) ? orderB + 1 : orderB;
         const newOrderB = orderA;
 
@@ -456,8 +510,10 @@
 
   <header>
     <h1>Trabalho BOSU</h1>
-    <div class="header-right">
-      <button class="btn-fs" id="btnFullscreen">⛶ </button>
+    <div class="header-info">
+      <span class="phone-info"><span class="phone-icon">&#9742;</span> Anestesia: 31615</span>
+      <span id="clockDisplay">--:--</span>
+      <button class="btn-fs" id="btnFullscreen">⛶ Ecrã Inteiro</button>
     </div>
   </header>
 
@@ -472,19 +528,14 @@
 
   <div class="board">
     <div class="column col-todo">
-      <div class="column-header">Por Fazer</div>
+      <div class="column-header" id="todoHeader">Por Fazer (0)</div>
       <div class="card-list" id="todoList"></div>
     </div>
     <div class="column col-done">
-      <div class="column-header">Feito</div>
+      <div class="column-header" id="doneHeader">Feito (0)</div>
       <div class="card-list" id="doneList"></div>
     </div>
   </div>
-
-  <footer>
-    <span class="phone-info">📞 Anestesia: 31615</span>
-    <span id="clockDisplay">--:--</span>
-  </footer>
 
 </body>
 </html>
