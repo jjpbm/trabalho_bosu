@@ -4,8 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Trabalho BOSU</title>
+  
+  <!-- Suporte PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1e293b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="BOSU">
+
   <style>
-    /* Reset e Tipografia Global */
     * { 
       box-sizing: border-box; 
       margin: 0; 
@@ -25,7 +32,7 @@
       min-height: 100vh;
     }
 
-    /* --- CABEÇALHO (Compacto / Telemóvel) --- */
+    /* Cabeçalho */
     header { 
       background: #1e293b; 
       padding: 12px 16px; 
@@ -64,7 +71,7 @@
       gap: 6px;
     }
     .phone-icon {
-      color: #ef4444; /* Vermelho vivo */
+      color: #ef4444;
       font-size: 1.1rem;
     }
 
@@ -90,7 +97,7 @@
     }
     .btn-fs:hover { background: #0369a1; }
 
-    /* Controlos e Formulário */
+    /* Controlos */
     .controls { 
       background: #1e293b; 
       padding: 12px 16px; 
@@ -98,9 +105,10 @@
       display: flex; 
       gap: 10px; 
       flex-wrap: wrap; 
+      align-items: center;
     }
     .controls input[type="text"] { 
-      flex: 1; 
+      flex: 2; 
       min-width: 180px; 
       padding: 10px 14px; 
       border: 1px solid #475569; 
@@ -110,6 +118,8 @@
       font-size: 1rem; 
     }
     .controls select { 
+      flex: 1;
+      min-width: 130px;
       padding: 10px 14px; 
       border: 1px solid #475569; 
       border-radius: 8px; 
@@ -127,6 +137,18 @@
       cursor: pointer; 
       font-size: 1rem; 
     }
+    .controls button.batch-clean-btn {
+      background: #475569;
+      color: #fca5a5;
+      border: 1px solid #ef4444;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-left: auto;
+    }
+    .controls button.batch-clean-btn:hover { background: #7f1d1d; color: white; }
 
     /* Colunas */
     .board { 
@@ -159,7 +181,7 @@
     
     .card-list { display: flex; flex-direction: column; gap: 12px; flex: 1; }
     
-    /* Cartões Adaptativos (sem quebra vertical de letras) */
+    /* Cartões */
     .card { 
       background: #334155; 
       padding: 14px 16px; 
@@ -182,13 +204,40 @@
       justify-content: space-between;
       width: 100%;
       gap: 10px;
+      flex-wrap: wrap;
+    }
+    .card-text-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 0;
+      flex-wrap: wrap;
     }
     .card-text {
       flex: 1;
-      min-width: 0;
+      min-width: 140px;
     }
 
-    /* Estado: A Decorrer */
+    /* Etiqueta da Sala */
+    .room-badge {
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      background: #0f172a;
+      border: 1px solid #475569;
+      color: #94a3b8;
+    }
+    .room-badge.sala-1 { border-color: #38bdf8; color: #38bdf8; }
+    .room-badge.sala-2 { border-color: #a855f7; color: #c084fc; }
+    .room-badge.sala-3 { border-color: #ec4899; color: #f472b6; }
+    .room-badge.fora-bloco { border-color: #eab308; color: #facc15; }
+
+    /* Estado: A Decorrer e Cronómetro */
     .card.running {
       border-left-color: #38bdf8 !important;
       background: #1e3a5f !important;
@@ -243,7 +292,7 @@
     .card-actions button.btn-move { background: #10b981; }
     .card-actions button.delete { background: #ef4444; }
 
-    /* --- MODO BLOCO OPERATÓRIO / TV (> 900px) --- */
+    /* MODO BLOCO OPERATÓRIO / TV (> 900px) */
     @media (min-width: 900px) {
       header { padding: 18px 32px; }
       header h1 { font-size: 2.5rem; }
@@ -258,6 +307,7 @@
         font-size: 1.3rem; 
         padding: 12px 18px; 
       }
+      .controls button.batch-clean-btn { font-size: 1.1rem; padding: 12px 18px; }
 
       .board { grid-template-columns: 1fr 1fr; gap: 28px; padding: 28px; }
       .column { padding: 24px; border-radius: 16px; }
@@ -272,6 +322,7 @@
         border-radius: 12px; 
         border-left-width: 10px; 
       }
+      .room-badge { font-size: 1.1rem; padding: 5px 12px; }
       .running-tag { font-size: 1rem; padding: 5px 14px; }
       .card-actions button { font-size: 1.1rem; padding: 10px 16px; }
     }
@@ -284,9 +335,9 @@
 
     const SENHA_CORRETA = "bosu123"; 
 
-    // CHAVES DO FIREBASE
+    // CONFIGURAÇÃO FIREBASE (Manter chaves)
     const firebaseConfig = {
-      apiKey: "AIzaSyASiNTd_r5CzxxgxQNuBL5UPtVjI5HpDcE",
+       apiKey: "AIzaSyASiNTd_r5CzxxgxQNuBL5UPtVjI5HpDcE",
   authDomain: "trabalho-bosu.firebaseapp.com",
   databaseURL: "https://trabalho-bosu-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "trabalho-bosu",
@@ -295,6 +346,7 @@
   appId: "1:798452896445:web:c1ee684a8ed2e076915dd4",
   measurementId: "G-L82P8EPRKY"
     };
+    const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbzL4G7kqJqwhfaaJS1mYM_JN9AguYAG2uYtkCCfIGQy0dWHGbnwylmXoZiGcOeVQLwrsg/exec";
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
@@ -314,13 +366,12 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-      // Ocultar formulário de inserção no modo leitura
       if (!temAcessoEscrita) {
         const controlsDiv = document.querySelector('.controls');
         if (controlsDiv) controlsDiv.style.display = 'none';
       }
 
-      // Relógio no Cabeçalho
+      // Relógio
       function updateClock() {
         const now = new Date();
         const timeStr = now.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
@@ -330,7 +381,18 @@
       setInterval(updateClock, 1000);
       updateClock();
 
-      // Botão Ecrã Inteiro
+      // Atualizador dinâmico de cronómetros no ecrã
+      setInterval(() => {
+        document.querySelectorAll('.running-tag').forEach(tag => {
+          const start = parseInt(tag.dataset.start);
+          if (start) {
+            const mins = Math.max(0, Math.floor((Date.now() - start) / 60000));
+            tag.innerHTML = `● A decorrer (${mins} min)`;
+          }
+        });
+      }, 10000);
+
+      // Ecrã Inteiro
       const btnFs = document.getElementById('btnFullscreen');
       btnFs.addEventListener('click', () => {
         if (!document.fullscreenElement) {
@@ -342,12 +404,16 @@
 
       // Formulário Adicionar
       const taskInput = document.getElementById('taskInput');
+      const roomSelect = document.getElementById('roomSelect');
       const statusSelect = document.getElementById('statusSelect');
       const addBtn = document.getElementById('addBtn');
+      const batchCleanBtn = document.getElementById('batchCleanBtn');
       const todoList = document.getElementById('todoList');
       const doneList = document.getElementById('doneList');
       const todoHeader = document.getElementById('todoHeader');
       const doneHeader = document.getElementById('doneHeader');
+
+      let currentDoneItems = [];
 
       if (addBtn && temAcessoEscrita) {
         addBtn.addEventListener('click', () => {
@@ -355,8 +421,10 @@
           if (!text) return;
           push(tasksRef, { 
             text, 
+            room: roomSelect.value,
             status: statusSelect.value, 
             isRunning: false,
+            startTime: null,
             order: Date.now(), 
             timestamp: Date.now() 
           });
@@ -364,34 +432,73 @@
         });
       }
 
-      // Renderização com Contadores e Ordenação
+      // Limpeza em Lote de "Feito"
+      if (batchCleanBtn && temAcessoEscrita) {
+        batchCleanBtn.addEventListener('click', () => {
+          if (currentDoneItems.length === 0) {
+            alert("Não existem procedimentos concluídos para arquivar.");
+            return;
+          }
+
+          if (confirm(`Tem a certeza que deseja arquivar todos os ${currentDoneItems.length} procedimentos concluídos e limpar a lista?`)) {
+            const batchPayload = currentDoneItems.map(item => {
+              const now = new Date();
+              const duracao = item.startTime ? Math.max(0, Math.round((now.getTime() - item.startTime) / 60000)) : "";
+              const horaInicioStr = item.startTime ? new Date(item.startTime).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' }) : "--:--";
+
+              return {
+                texto: item.text,
+                local: item.room || "N/A",
+                horaInicio: horaInicioStr,
+                horaFim: now.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' }),
+                duracaoMin: duracao
+              };
+            });
+
+            if (URL_GOOGLE_SCRIPT && !URL_GOOGLE_SCRIPT.includes("COLE_AQUI")) {
+              fetch(URL_GOOGLE_SCRIPT, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(batchPayload)
+              }).catch(err => console.error("Erro no envio em lote:", err));
+            }
+
+            // Remove todos os feitos do Firebase
+            currentDoneItems.forEach(item => {
+              remove(ref(db, `tarefas_bosu/${item.id}`));
+            });
+          }
+        });
+      }
+
+      // Renderização
       onValue(tasksRef, (snapshot) => {
         todoList.innerHTML = '';
         doneList.innerHTML = '';
         const data = snapshot.val();
         
         let todoItems = [];
-        let doneItems = [];
+        currentDoneItems = [];
 
         if (data) {
           const items = Object.keys(data).map(key => ({ id: key, ...data[key] }));
           items.sort((a, b) => (a.order || a.timestamp || 0) - (b.order || b.timestamp || 0));
 
           todoItems = items.filter(item => item.status === 'todo');
-          doneItems = items.filter(item => item.status === 'done');
+          currentDoneItems = items.filter(item => item.status === 'done');
 
           todoItems.forEach((item, index) => {
             todoList.appendChild(createCardElement(item.id, item, index, todoItems));
           });
 
-          doneItems.forEach((item, index) => {
-            doneList.appendChild(createCardElement(item.id, item, index, doneItems));
+          currentDoneItems.forEach((item, index) => {
+            doneList.appendChild(createCardElement(item.id, item, index, currentDoneItems));
           });
         }
 
-        // Atualização dos cabeçalhos com o número total
         todoHeader.textContent = `Por Fazer (${todoItems.length})`;
-        doneHeader.textContent = `Feito (${doneItems.length})`;
+        doneHeader.textContent = `Feito (${currentDoneItems.length})`;
       });
 
       function createCardElement(id, item, index, listArray) {
@@ -401,15 +508,32 @@
         const headerRow = document.createElement('div');
         headerRow.className = 'card-header-row';
 
+        const textContainer = document.createElement('div');
+        textContainer.className = 'card-text-container';
+
+        // Etiqueta do Local
+        if (item.room) {
+          const roomBadge = document.createElement('span');
+          const roomSlug = item.room.toLowerCase().replace(/\s+/g, '-');
+          roomBadge.className = `room-badge ${roomSlug}`;
+          roomBadge.textContent = item.room;
+          textContainer.appendChild(roomBadge);
+        }
+
         const textSpan = document.createElement('span');
         textSpan.className = 'card-text';
         textSpan.textContent = item.text;
-        headerRow.appendChild(textSpan);
+        textContainer.appendChild(textSpan);
 
+        headerRow.appendChild(textContainer);
+
+        // Cronómetro / Em curso
         if (item.isRunning) {
           const tag = document.createElement('span');
           tag.className = 'running-tag';
-          tag.innerHTML = '● A decorrer';
+          tag.dataset.start = item.startTime || Date.now();
+          const mins = item.startTime ? Math.max(0, Math.floor((Date.now() - item.startTime) / 60000)) : 0;
+          tag.innerHTML = `● A decorrer (${mins} min)`;
           headerRow.appendChild(tag);
         }
 
@@ -420,28 +544,34 @@
           actionsDiv.className = 'card-actions';
 
           if (item.status === 'todo') {
-            // 1. Play / Pausa
+            // 1. Play / Pause
             const playBtn = document.createElement('button');
             playBtn.className = 'btn-play' + (item.isRunning ? ' active' : '');
             playBtn.innerHTML = item.isRunning ? '⏸️' : '▶️';
-            playBtn.title = item.isRunning ? 'Pausar' : 'Marcar como A Decorrer';
-            playBtn.onclick = () => update(ref(db, `tarefas_bosu/${id}`), { isRunning: !item.isRunning });
+            playBtn.title = item.isRunning ? 'Pausar' : 'Iniciar procedimento';
+            playBtn.onclick = () => {
+              const now = Date.now();
+              update(ref(db, `tarefas_bosu/${id}`), { 
+                isRunning: !item.isRunning,
+                startTime: !item.isRunning ? (item.startTime || now) : item.startTime 
+              });
+            };
             actionsDiv.appendChild(playBtn);
 
-            // 2. Botão Editar (✏️)
+            // 2. Editar
             const editBtn = document.createElement('button');
             editBtn.className = 'btn-edit';
             editBtn.innerHTML = '✏️';
             editBtn.title = 'Editar procedimento';
             editBtn.onclick = () => {
-              const novoTexto = prompt("Modificar ou acrescentar informação ao procedimento:", item.text);
+              const novoTexto = prompt("Modificar texto do procedimento:", item.text);
               if (novoTexto !== null && novoTexto.trim() !== "") {
                 update(ref(db, `tarefas_bosu/${id}`), { text: novoTexto.trim() });
               }
             };
             actionsDiv.appendChild(editBtn);
 
-            // 3. Subir / Descer Ordem
+            // 3. Ordem
             if (index > 0) {
               const upBtn = document.createElement('button');
               upBtn.className = 'btn-reorder';
@@ -460,29 +590,43 @@
               actionsDiv.appendChild(downBtn);
             }
 
-            // 4. Mover para Feito
+            // 4. Mover p/ Feito
             const moveBtn = document.createElement('button');
             moveBtn.className = 'btn-move';
             moveBtn.textContent = '➔ Feito';
-            moveBtn.onclick = () => update(ref(db, `tarefas_bosu/${id}`), { status: 'done', isRunning: false });
+            moveBtn.onclick = () => {
+              update(ref(db, `tarefas_bosu/${id}`), { 
+                status: 'done', 
+                isRunning: false,
+                endTime: Date.now()
+              });
+            };
             actionsDiv.appendChild(moveBtn);
           }
 
-          // Botão Apagar
+          // Botão Apagar Individual
           const deleteBtn = document.createElement('button');
           deleteBtn.className = 'delete';
           deleteBtn.innerHTML = '🗑️';
           deleteBtn.title = 'Apagar';
           deleteBtn.onclick = () => {
-            const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbyUCCnNtvDGk2nHiW36o2xKaZOXZeDBJpB23-FsRliK5F2vSH2pXLDnzuPqa5ttF3MVSg/exec";
-
             if (item.status === 'done' && URL_GOOGLE_SCRIPT && !URL_GOOGLE_SCRIPT.includes("COLE_AQUI")) {
+              const now = new Date();
+              const duracao = item.startTime ? Math.max(0, Math.round((now.getTime() - item.startTime) / 60000)) : "";
+              const horaInicioStr = item.startTime ? new Date(item.startTime).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' }) : "--:--";
+
               fetch(URL_GOOGLE_SCRIPT, {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ texto: item.text })
-              }).catch(err => console.error("Erro ao enviar para a Google Sheet:", err));
+                body: JSON.stringify({
+                  texto: item.text,
+                  local: item.room || "N/A",
+                  horaInicio: horaInicioStr,
+                  horaFim: now.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' }),
+                  duracaoMin: duracao
+                })
+              }).catch(err => console.error("Erro ao enviar para o Sheets:", err));
             }
 
             remove(ref(db, `tarefas_bosu/${id}`));
@@ -519,11 +663,18 @@
 
   <div class="controls">
     <input type="text" id="taskInput" placeholder="Escreva o procedimento..." />
+    <select id="roomSelect">
+      <option value="Sala 1">Sala 1</option>
+      <option value="Sala 2">Sala 2</option>
+      <option value="Sala 3">Sala 3</option>
+      <option value="Fora do Bloco">Fora do Bloco</option>
+    </select>
     <select id="statusSelect">
       <option value="todo">Por Fazer</option>
       <option value="done">Feito</option>
     </select>
     <button class="add-btn" id="addBtn">Adicionar</button>
+    <button class="batch-clean-btn" id="batchCleanBtn">📦 Arquivar Feitos</button>
   </div>
 
   <div class="board">
