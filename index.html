@@ -511,8 +511,8 @@
         const textContainer = document.createElement('div');
         textContainer.className = 'card-text-container';
 
-        // Etiqueta do Local
-        if (item.room) {
+        // Etiqueta do Local (apenas é criada se tiver uma sala definida)
+        if (item.room && item.room.trim() !== "") {
           const roomBadge = document.createElement('span');
           const roomSlug = item.room.toLowerCase().replace(/\s+/g, '-');
           roomBadge.className = `room-badge ${roomSlug}`;
@@ -558,19 +558,32 @@
             };
             actionsDiv.appendChild(playBtn);
 
-            // 2. Editar
+            // 2. Editar (Texto e Sala)
             const editBtn = document.createElement('button');
             editBtn.className = 'btn-edit';
             editBtn.innerHTML = '✏️';
-            editBtn.title = 'Editar procedimento';
+            editBtn.title = 'Editar procedimento ou sala';
             editBtn.onclick = () => {
-              const novoTexto = prompt("Modificar texto do procedimento:", item.text);
-              if (novoTexto !== null && novoTexto.trim() !== "") {
-                update(ref(db, `tarefas_bosu/${id}`), { text: novoTexto.trim() });
-              }
+              const novoTexto = prompt("Modificar o procedimento:", item.text);
+              if (novoTexto === null) return;
+
+              const opcoesSala = "Definir local:\n0 - Sem Sala\n1 - Sala 1\n2 - Sala 2\n3 - Sala 3\n4 - Fora do Bloco";
+              const escolhaSala = prompt(opcoesSala, item.room ? item.room : "0");
+
+              let novaSala = item.room || "";
+              if (escolhaSala === "0" || escolhaSala === "" || escolhaSala === null) novaSala = "";
+              else if (escolhaSala === "1" || escolhaSala.toLowerCase() === "sala 1") novaSala = "Sala 1";
+              else if (escolhaSala === "2" || escolhaSala.toLowerCase() === "sala 2") novaSala = "Sala 2";
+              else if (escolhaSala === "3" || escolhaSala.toLowerCase() === "sala 3") novaSala = "Sala 3";
+              else if (escolhaSala === "4" || escolhaSala.toLowerCase() === "fora do bloco") novaSala = "Fora do Bloco";
+              else novaSala = escolhaSala;
+
+              update(ref(db, `tarefas_bosu/${id}`), { 
+                text: novoTexto.trim() !== "" ? novoTexto.trim() : item.text,
+                room: novaSala
+              });
             };
             actionsDiv.appendChild(editBtn);
-
             // 3. Ordem
             if (index > 0) {
               const upBtn = document.createElement('button');
@@ -663,7 +676,8 @@
 
   <div class="controls">
     <input type="text" id="taskInput" placeholder="Escreva o procedimento..." />
-    <select id="roomSelect">
+   <select id="roomSelect">
+      <option value="">Sem Sala / A definir</option>
       <option value="Sala 1">Sala 1</option>
       <option value="Sala 2">Sala 2</option>
       <option value="Sala 3">Sala 3</option>
