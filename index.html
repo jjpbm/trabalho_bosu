@@ -4,703 +4,883 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Trabalho BOSU</title>
-  
+
   <!-- Suporte PWA -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#1e293b">
+  <meta name="theme-color" content="#0f1623">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="BOSU">
 
   <style>
-    * { 
-      box-sizing: border-box; 
-      margin: 0; 
-      padding: 0; 
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; 
+    /* Paleta neutra com uma única cor de destaque */
+    :root {
+      --bg: #0f1623;
+      --surface: #151e2e;
+      --surface-2: #1c2638;
+      --border: #2a364b;
+      --border-strong: #3a4862;
+      --text: #e8edf4;
+      --muted: #8c99ae;
+      --accent: #5b8def;
+      --accent-soft: rgba(91, 141, 239, 0.12);
+      --danger: #e5484d;
+      --ok: #3fb68b;
     }
 
-    html, body {
-      min-height: 100%;
-      background-color: #0f172a; 
-      color: #f8fafc;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
     }
-
-    body { 
-      display: flex; 
-      flex-direction: column; 
-      min-height: 100vh;
-    }
+    html, body { min-height: 100%; background: var(--bg); color: var(--text); }
+    body { display: flex; flex-direction: column; min-height: 100vh; }
+    button { font: inherit; cursor: pointer; color: inherit; }
+    .ico { width: 18px; height: 18px; flex-shrink: 0; display: block; }
 
     /* Cabeçalho */
-    header { 
-      background: #1e293b; 
-      padding: 12px 16px; 
-      border-bottom: 2px solid #334155; 
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
+    header {
+      background: var(--surface);
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px;
     }
-    
-    header h1 { 
-      font-size: 1.5rem; 
-      font-weight: 800; 
-      color: #38bdf8; 
-      letter-spacing: 1px; 
+    .brand { display: flex; flex-direction: column; gap: 2px; }
+    header h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: 0.3px; color: var(--text); }
+    .brand small { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1.2px; }
+    .header-info { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+    .phone-info {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border);
+      background: var(--bg); font-weight: 600; font-size: 0.95rem;
     }
-    
-    .header-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
+    .phone-info .ico { color: var(--muted); }
+    #clockDisplay {
+      font-weight: 700; font-size: 1.25rem; font-variant-numeric: tabular-nums;
+      padding: 0 6px; color: var(--text);
     }
 
-    .phone-info { 
-      background: #0f172a; 
-      padding: 6px 12px; 
-      border-radius: 8px; 
-      color: #f1f5f9; 
-      font-weight: 600; 
-      border: 1px solid #334155; 
-      font-size: 0.95rem; 
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+    .hbtn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: transparent; border: 1px solid var(--border); border-radius: 6px;
+      padding: 7px 10px; font-weight: 600; font-size: 0.85rem; color: var(--text);
     }
-    .phone-icon {
-      color: #ef4444;
-      font-size: 1.1rem;
-    }
+    .hbtn:hover { background: var(--surface-2); border-color: var(--border-strong); }
+    .hbtn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+    .hbtn .lbl { display: none; }
+    @media (min-width: 640px) { .hbtn .lbl { display: inline; } }
 
-    #clockDisplay { 
-      color: #38bdf8; 
-      font-weight: 800; 
-      font-size: 1.2rem; 
-      letter-spacing: 1px;
+    /* Indicador de ligação */
+    .conn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.8rem; font-weight: 600; color: var(--muted); white-space: nowrap; padding: 0 4px;
     }
+    .conn .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+    .conn.on .dot { background: var(--ok); }
+    .conn.off { color: var(--danger); }
+    .conn.off .dot { background: var(--danger); animation: piscar 1.5s infinite; }
+    @keyframes piscar { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
 
-    .btn-fs { 
-      background: #0284c7; 
-      color: white; 
-      border: none; 
-      padding: 6px 12px; 
-      border-radius: 6px; 
-      cursor: pointer; 
-      font-weight: 600; 
-      font-size: 0.85rem; 
-      display: flex; 
-      align-items: center; 
-      gap: 6px; 
+    /* Controlos (só visíveis em modo de gestão) */
+    .controls {
+      background: var(--surface); padding: 12px 16px; border-bottom: 1px solid var(--border);
+      display: none; gap: 8px; flex-wrap: wrap; align-items: stretch;
     }
-    .btn-fs:hover { background: #0369a1; }
-
-    /* Controlos */
-    .controls { 
-      background: #1e293b; 
-      padding: 12px 16px; 
-      border-bottom: 1px solid #334155; 
-      display: flex; 
-      gap: 10px; 
-      flex-wrap: wrap; 
-      align-items: center;
+    body.can-write .controls { display: flex; }
+    .controls input[type="text"], .controls select {
+      padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px;
+      background: var(--bg); color: var(--text); font-size: 1rem;
     }
-    .controls input[type="text"] { 
-      flex: 2; 
-      min-width: 180px; 
-      padding: 10px 14px; 
-      border: 1px solid #475569; 
-      border-radius: 8px; 
-      background: #0f172a; 
-      color: white; 
-      font-size: 1rem; 
+    .controls input[type="text"] { flex: 2; min-width: 200px; }
+    .controls select { flex: 1; min-width: 130px; }
+    .controls input:focus, .controls select:focus, dialog input:focus, dialog select:focus {
+      outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft);
     }
-    .controls select { 
-      flex: 1;
-      min-width: 130px;
-      padding: 10px 14px; 
-      border: 1px solid #475569; 
-      border-radius: 8px; 
-      background: #0f172a; 
-      color: white; 
-      font-size: 1rem; 
+    .field-time {
+      display: flex; align-items: center; gap: 8px; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 6px; padding: 0 12px; color: var(--muted); font-size: 0.85rem; white-space: nowrap;
     }
-    .controls button.add-btn { 
-      background: #10b981; 
-      color: white; 
-      border: none; 
-      padding: 10px 20px; 
-      border-radius: 8px; 
-      font-weight: 700; 
-      cursor: pointer; 
-      font-size: 1rem; 
+    .field-time input {
+      background: transparent; border: none; color: var(--text); font-size: 1rem; padding: 9px 0; color-scheme: dark;
     }
-    .controls button.batch-clean-btn {
-      background: #475569;
-      color: #fca5a5;
-      border: 1px solid #ef4444;
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 0.9rem;
-      margin-left: auto;
+    .field-time input:focus { outline: none; }
+    .add-btn {
+      background: var(--accent); color: #fff !important; border: none; padding: 10px 20px; border-radius: 6px;
+      font-weight: 600; font-size: 1rem;
     }
-    .controls button.batch-clean-btn:hover { background: #7f1d1d; color: white; }
+    .add-btn:hover { filter: brightness(1.08); }
+    .batch-clean-btn { margin-left: auto; }
 
     /* Colunas */
-    .board { 
-      display: grid; 
-      grid-template-columns: 1fr; 
-      gap: 16px; 
-      padding: 16px; 
-      flex: 1; 
+    .board { display: grid; grid-template-columns: 1fr; gap: 16px; padding: 16px; flex: 1; }
+    .column {
+      background: var(--surface); border-radius: 10px; padding: 16px; border: 1px solid var(--border);
+      display: flex; flex-direction: column;
     }
-    
-    .column { 
-      background: #1e293b; 
-      border-radius: 12px; 
-      padding: 16px; 
-      border: 1px solid #334155; 
-      display: flex; 
-      flex-direction: column; 
+    .column-header {
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 0.95rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px;
+      color: var(--muted); margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
     }
-    .column-header { 
-      font-size: 1.3rem; 
-      font-weight: 700; 
-      margin-bottom: 16px; 
-      padding-bottom: 10px; 
-      border-bottom: 3px solid; 
-      text-transform: uppercase; 
-      letter-spacing: 1px; 
+    .column-header .count {
+      font-size: 0.85rem; letter-spacing: 0; padding: 2px 10px; border-radius: 999px;
+      background: var(--surface-2); color: var(--text);
     }
-    .col-todo .column-header { border-color: #f97316; color: #fb923c; }
-    .col-done .column-header { border-color: #10b981; color: #34d399; }
-    
-    .card-list { display: flex; flex-direction: column; gap: 12px; flex: 1; }
-    
+    .card-list { display: flex; flex-direction: column; gap: 10px; flex: 1; }
+    .empty { color: var(--muted); font-size: 0.95rem; padding: 12px 2px; }
+
+    .room-group-title {
+      font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px;
+      color: var(--muted); padding: 8px 2px 2px;
+    }
+    .room-group-title:first-child { padding-top: 0; }
+
     /* Cartões */
-    .card { 
-      background: #334155; 
-      padding: 14px 16px; 
-      border-radius: 8px; 
-      font-size: 1.2rem; 
-      font-weight: 600; 
-      display: flex; 
-      flex-direction: column; 
-      gap: 12px;
-      border-left: 6px solid #64748b; 
-      transition: all 0.3s ease;
-      overflow-wrap: break-word; 
+    .card {
+      background: var(--surface-2); padding: 14px 16px; border-radius: 8px;
+      border: 1px solid var(--border); border-left: 4px solid var(--border-strong);
+      font-size: 1.15rem; font-weight: 600;
+      display: flex; flex-direction: column; gap: 12px; overflow-wrap: break-word;
     }
-    .col-todo .card { border-left-color: #f97316; }
-    .col-done .card { border-left-color: #10b981; }
+    .col-done .card { background: transparent; border-left-color: var(--border); color: var(--muted); }
+    .card.running { border-color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); }
 
     .card-header-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-      gap: 10px;
-      flex-wrap: wrap;
+      display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 10px; flex-wrap: wrap;
     }
-    .card-text-container {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex: 1;
-      min-width: 0;
-      flex-wrap: wrap;
-    }
-    .card-text {
-      flex: 1;
-      min-width: 140px;
-    }
+    .card-text-container { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; flex-wrap: wrap; }
+    .card-text { flex: 1 1 auto; min-width: 0; overflow-wrap: break-word; }
 
-    /* Etiqueta da Sala */
+    /* Etiquetas (sala, jejum, estado) — todas neutras */
     .room-badge {
-      font-size: 0.8rem;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      white-space: nowrap;
-      background: #0f172a;
-      border: 1px solid #475569;
-      color: #94a3b8;
+      font-size: 0.75rem; font-weight: 700; padding: 3px 8px; border-radius: 4px;
+      text-transform: uppercase; letter-spacing: 0.6px; white-space: nowrap;
+      background: var(--bg); border: 1px solid var(--border-strong); color: var(--text);
     }
-    .room-badge.sala-1 { border-color: #38bdf8; color: #38bdf8; }
-    .room-badge.sala-2 { border-color: #a855f7; color: #c084fc; }
-    .room-badge.sala-3 { border-color: #ec4899; color: #f472b6; }
-    .room-badge.fora-bloco { border-color: #eab308; color: #facc15; }
-
-    /* Estado: A Decorrer e Cronómetro */
-    .card.running {
-      border-left-color: #38bdf8 !important;
-      background: #1e3a5f !important;
-      box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
-      border: 1px solid #38bdf8;
+    .info-tag {
+      font-size: 0.8rem; font-weight: 600; padding: 3px 9px; border-radius: 4px; white-space: nowrap;
+      background: transparent; border: 1px solid var(--border-strong); color: var(--muted);
     }
     .running-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #0284c7;
-      color: #ffffff;
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      animation: pulseGlow 1.8s infinite;
-      white-space: nowrap;
-      flex-shrink: 0;
+      display: inline-flex; align-items: center; gap: 7px; flex-shrink: 0;
+      font-size: 0.8rem; font-weight: 700; padding: 4px 10px; border-radius: 4px; white-space: nowrap;
+      background: var(--accent); color: #fff;
     }
-    @keyframes pulseGlow {
-      0% { opacity: 0.7; transform: scale(0.98); }
-      50% { opacity: 1; transform: scale(1.03); }
-      100% { opacity: 0.7; transform: scale(0.98); }
+    .running-tag::before {
+      content: ""; width: 7px; height: 7px; border-radius: 50%; background: #fff; animation: piscar 1.8s infinite;
     }
-    
-    .card-actions { 
-      display: flex; 
-      gap: 8px; 
-      align-items: center; 
-      flex-wrap: wrap; 
+
+    /* Ações do cartão */
+    .card-actions { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
+    .card-actions button {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      background: transparent; border: 1px solid var(--border-strong); border-radius: 6px;
+      padding: 7px 8px; font-weight: 600; font-size: 0.9rem; color: var(--text);
     }
-    .card-actions button { 
-      border: none; 
-      background: #475569; 
-      color: white; 
-      padding: 8px 12px; 
-      border-radius: 6px; 
-      cursor: pointer; 
-      font-weight: 600; 
-      font-size: 0.95rem; 
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+    .card-actions button:hover { background: var(--bg); }
+    .card-actions .btn-play.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .card-actions .btn-move { border-color: var(--accent); color: var(--accent); }
+    .card-actions .btn-move:hover { background: var(--accent); color: #fff; }
+    .card-actions .delete { color: var(--muted); }
+    .card-actions .delete:hover { border-color: var(--danger); color: var(--danger); background: transparent; }
+
+    /* Diálogos */
+    dialog {
+      margin: auto; background: var(--surface); color: var(--text); border: 1px solid var(--border);
+      border-radius: 10px; padding: 22px; width: min(420px, calc(100vw - 32px));
     }
-    .card-actions button.btn-play { background: #0284c7; }
-    .card-actions button.btn-play.active { background: #eab308; color: #0f172a; }
-    .card-actions button.btn-edit { background: #64748b; }
-    .card-actions button.btn-reorder { background: #334155; border: 1px solid #475569; }
-    .card-actions button.btn-move { background: #10b981; }
-    .card-actions button.delete { background: #ef4444; }
+    dialog::backdrop { background: rgba(5, 9, 16, 0.75); }
+    dialog form { display: flex; flex-direction: column; gap: 14px; }
+    dialog h2 { font-size: 1.1rem; font-weight: 700; }
+    dialog .f { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; color: var(--muted); }
+    dialog input, dialog select {
+      padding: 10px 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg);
+      color: var(--text); font-size: 1rem; color-scheme: dark;
+    }
+    .dlg-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+    .dlg-actions button {
+      padding: 9px 16px; border-radius: 6px; border: 1px solid var(--border-strong);
+      background: transparent; font-weight: 600;
+    }
+    .dlg-actions .primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .err { color: var(--danger); font-size: 0.9rem; min-height: 1em; }
+
+    /* Aviso flutuante */
+    #toast {
+      position: fixed; left: 50%; bottom: 20px; transform: translate(-50%, calc(100% + 40px)); visibility: hidden;
+      background: var(--surface-2); color: var(--text); border: 1px solid var(--border-strong);
+      border-left: 4px solid var(--accent); padding: 12px 18px; border-radius: 8px; font-weight: 600;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); transition: transform 0.3s; z-index: 50;
+      max-width: calc(100vw - 32px);
+    }
+    #toast.show { transform: translate(-50%, 0); visibility: visible; }
 
     /* MODO BLOCO OPERATÓRIO / TV (> 900px) */
     @media (min-width: 900px) {
-      header { padding: 18px 32px; }
-      header h1 { font-size: 2.5rem; }
-      
-      .phone-info { font-size: 1.4rem; padding: 8px 18px; }
-      .phone-icon { font-size: 1.5rem; }
-      #clockDisplay { font-size: 1.9rem; margin-left: 12px; }
-      .btn-fs { font-size: 1.1rem; padding: 10px 18px; margin-left: 12px; }
+      header { padding: 16px 32px; }
+      header h1 { font-size: 2rem; }
+      .brand small { font-size: 0.9rem; }
+      .phone-info { font-size: 1.3rem; padding: 8px 16px; }
+      .phone-info .ico { width: 22px; height: 22px; }
+      #clockDisplay { font-size: 1.9rem; padding: 0 12px; }
+      .hbtn { font-size: 1rem; padding: 9px 14px; }
+      .hbtn .ico { width: 20px; height: 20px; }
+      .conn { font-size: 1rem; }
 
-      .controls { padding: 16px 32px; gap: 14px; }
-      .controls input[type="text"], .controls select, .controls button.add-btn { 
-        font-size: 1.3rem; 
-        padding: 12px 18px; 
-      }
-      .controls button.batch-clean-btn { font-size: 1.1rem; padding: 12px 18px; }
+      .controls { padding: 16px 32px; gap: 12px; }
+      .controls input[type="text"], .controls select, .add-btn, .field-time input { font-size: 1.2rem; }
+      .controls input[type="text"], .controls select { padding: 12px 16px; }
 
-      .board { grid-template-columns: 1fr 1fr; gap: 28px; padding: 28px; }
-      .column { padding: 24px; border-radius: 16px; }
-      .column-header { font-size: 2rem; margin-bottom: 20px; }
-      
-      .card { 
-        flex-direction: row; 
-        justify-content: space-between;
-        align-items: center;
-        font-size: 1.9rem; 
-        padding: 20px 24px; 
-        border-radius: 12px; 
-        border-left-width: 10px; 
+      .board { grid-template-columns: 1fr 1fr; gap: 28px; padding: 28px 32px; }
+      .column { padding: 24px; border-radius: 12px; }
+      .column-header { font-size: 1.3rem; margin-bottom: 18px; }
+      .column-header .count { font-size: 1.1rem; }
+      .room-group-title { font-size: 1rem; }
+
+      .card {
+        flex-direction: row; justify-content: space-between; align-items: center;
+        font-size: 1.7rem; padding: 18px 22px; border-radius: 10px; border-left-width: 6px; gap: 18px;
       }
-      .room-badge { font-size: 1.1rem; padding: 5px 12px; }
-      .running-tag { font-size: 1rem; padding: 5px 14px; }
-      .card-actions button { font-size: 1.1rem; padding: 10px 16px; }
+      .card-header-row { flex: 1; min-width: 0; flex-direction: column; align-items: flex-start; gap: 8px; }
+      .card-text-container { width: 100%; }
+      .card-actions { flex-wrap: nowrap; flex-shrink: 0; gap: 6px; }
+      .room-badge { font-size: 1rem; padding: 4px 10px; }
+      .info-tag, .running-tag { font-size: 1rem; padding: 5px 12px; }
+      .card-actions button { font-size: 1.05rem; padding: 10px 12px; }
+      .card-actions .ico { width: 22px; height: 22px; }
     }
   </style>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
-    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-
-    const SENHA_CORRETA = "bosu123"; 
-
-    // CONFIGURAÇÃO FIREBASE (Manter chaves)
-    const firebaseConfig = {
-       apiKey: "AIzaSyASiNTd_r5CzxxgxQNuBL5UPtVjI5HpDcE",
-  authDomain: "trabalho-bosu.firebaseapp.com",
-  databaseURL: "https://trabalho-bosu-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "trabalho-bosu",
-  storageBucket: "trabalho-bosu.firebasestorage.app",
-  messagingSenderId: "798452896445",
-  appId: "1:798452896445:web:c1ee684a8ed2e076915dd4",
-  measurementId: "G-L82P8EPRKY"
-    };
-    const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbzL4G7kqJqwhfaaJS1mYM_JN9AguYAG2uYtkCCfIGQy0dWHGbnwylmXoZiGcOeVQLwrsg/exec";
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const auth = getAuth(app);
-
-    signInAnonymously(auth).catch(err => console.error(err));
-
-    const tasksRef = ref(db, 'tarefas_bosu');
-
-    let temAcessoEscrita = false;
-    const senhaIntroduzida = prompt("Introduza a palavra-passe para gerir a lista:");
-
-    if (senhaIntroduzida === SENHA_CORRETA) {
-      temAcessoEscrita = true;
-    } else {
-      alert("Modo de Apenas Leitura ativado.");
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      if (!temAcessoEscrita) {
-        const controlsDiv = document.querySelector('.controls');
-        if (controlsDiv) controlsDiv.style.display = 'none';
-      }
-
-      // Relógio
-      function updateClock() {
-        const now = new Date();
-        const timeStr = now.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
-        const clockElem = document.getElementById('clockDisplay');
-        if (clockElem) clockElem.textContent = timeStr;
-      }
-      setInterval(updateClock, 1000);
-      updateClock();
-
-      // Atualizador dinâmico de cronómetros no ecrã
-      setInterval(() => {
-        document.querySelectorAll('.running-tag').forEach(tag => {
-          const start = parseInt(tag.dataset.start);
-          if (start) {
-            const mins = Math.max(0, Math.floor((Date.now() - start) / 60000));
-            tag.innerHTML = `● A decorrer (${mins} min)`;
-          }
-        });
-      }, 10000);
-
-      // Ecrã Inteiro
-      const btnFs = document.getElementById('btnFullscreen');
-      btnFs.addEventListener('click', () => {
-        if (!document.fullscreenElement) {
-          document.documentElement.requestFullscreen().catch(err => console.error(err));
-        } else {
-          if (document.exitFullscreen) document.exitFullscreen();
-        }
-      });
-
-      // Formulário Adicionar
-      const taskInput = document.getElementById('taskInput');
-      const roomSelect = document.getElementById('roomSelect');
-      const statusSelect = document.getElementById('statusSelect');
-      const addBtn = document.getElementById('addBtn');
-      const batchCleanBtn = document.getElementById('batchCleanBtn');
-      const todoList = document.getElementById('todoList');
-      const doneList = document.getElementById('doneList');
-      const todoHeader = document.getElementById('todoHeader');
-      const doneHeader = document.getElementById('doneHeader');
-
-      let currentDoneItems = [];
-
-      if (addBtn && temAcessoEscrita) {
-        addBtn.addEventListener('click', () => {
-          const text = taskInput.value.trim();
-          if (!text) return;
-          push(tasksRef, { 
-            text, 
-            room: roomSelect.value,
-            status: statusSelect.value, 
-            isRunning: false,
-            startTime: null,
-            order: Date.now(), 
-            timestamp: Date.now() 
-          });
-          taskInput.value = '';
-        });
-      }
-
-      // Limpeza em Lote de "Feito"
-      if (batchCleanBtn && temAcessoEscrita) {
-        batchCleanBtn.addEventListener('click', () => {
-          if (currentDoneItems.length === 0) {
-            alert("Não existem procedimentos concluídos para arquivar.");
-            return;
-          }
-
-          if (confirm(`Tem a certeza que deseja arquivar todos os ${currentDoneItems.length} procedimentos concluídos e limpar a lista?`)) {
-            const batchPayload = currentDoneItems.map(item => {
-              const now = new Date();
-              const duracao = item.startTime ? Math.max(0, Math.round((now.getTime() - item.startTime) / 60000)) : "";
-              const horaInicioStr = item.startTime ? new Date(item.startTime).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' }) : "--:--";
-
-              return {
-                texto: item.text,
-                local: item.room || "N/A",
-                horaInicio: horaInicioStr,
-                horaFim: now.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' }),
-                duracaoMin: duracao
-              };
-            });
-
-            if (URL_GOOGLE_SCRIPT && !URL_GOOGLE_SCRIPT.includes("COLE_AQUI")) {
-              fetch(URL_GOOGLE_SCRIPT, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(batchPayload)
-              }).catch(err => console.error("Erro no envio em lote:", err));
-            }
-
-            // Remove todos os feitos do Firebase
-            currentDoneItems.forEach(item => {
-              remove(ref(db, `tarefas_bosu/${item.id}`));
-            });
-          }
-        });
-      }
-
-      // Renderização
-      onValue(tasksRef, (snapshot) => {
-        todoList.innerHTML = '';
-        doneList.innerHTML = '';
-        const data = snapshot.val();
-        
-        let todoItems = [];
-        currentDoneItems = [];
-
-        if (data) {
-          const items = Object.keys(data).map(key => ({ id: key, ...data[key] }));
-          items.sort((a, b) => (a.order || a.timestamp || 0) - (b.order || b.timestamp || 0));
-
-          todoItems = items.filter(item => item.status === 'todo');
-          currentDoneItems = items.filter(item => item.status === 'done');
-
-          todoItems.forEach((item, index) => {
-            todoList.appendChild(createCardElement(item.id, item, index, todoItems));
-          });
-
-          currentDoneItems.forEach((item, index) => {
-            doneList.appendChild(createCardElement(item.id, item, index, currentDoneItems));
-          });
-        }
-
-        todoHeader.textContent = `Por Fazer (${todoItems.length})`;
-        doneHeader.textContent = `Feito (${currentDoneItems.length})`;
-      });
-
-      function createCardElement(id, item, index, listArray) {
-        const div = document.createElement('div');
-        div.className = 'card' + (item.isRunning ? ' running' : '');
-        
-        const headerRow = document.createElement('div');
-        headerRow.className = 'card-header-row';
-
-        const textContainer = document.createElement('div');
-        textContainer.className = 'card-text-container';
-
-        // Etiqueta do Local (apenas é criada se tiver uma sala definida)
-        if (item.room && item.room.trim() !== "") {
-          const roomBadge = document.createElement('span');
-          const roomSlug = item.room.toLowerCase().replace(/\s+/g, '-');
-          roomBadge.className = `room-badge ${roomSlug}`;
-          roomBadge.textContent = item.room;
-          textContainer.appendChild(roomBadge);
-        }
-
-        const textSpan = document.createElement('span');
-        textSpan.className = 'card-text';
-        textSpan.textContent = item.text;
-        textContainer.appendChild(textSpan);
-
-        headerRow.appendChild(textContainer);
-
-        // Cronómetro / Em curso
-        if (item.isRunning) {
-          const tag = document.createElement('span');
-          tag.className = 'running-tag';
-          tag.dataset.start = item.startTime || Date.now();
-          const mins = item.startTime ? Math.max(0, Math.floor((Date.now() - item.startTime) / 60000)) : 0;
-          tag.innerHTML = `● A decorrer (${mins} min)`;
-          headerRow.appendChild(tag);
-        }
-
-        div.appendChild(headerRow);
-
-        if (temAcessoEscrita) {
-          const actionsDiv = document.createElement('div');
-          actionsDiv.className = 'card-actions';
-
-          if (item.status === 'todo') {
-            // 1. Play / Pause
-            const playBtn = document.createElement('button');
-            playBtn.className = 'btn-play' + (item.isRunning ? ' active' : '');
-            playBtn.innerHTML = item.isRunning ? '⏸️' : '▶️';
-            playBtn.title = item.isRunning ? 'Pausar' : 'Iniciar procedimento';
-            playBtn.onclick = () => {
-              const now = Date.now();
-              update(ref(db, `tarefas_bosu/${id}`), { 
-                isRunning: !item.isRunning,
-                startTime: !item.isRunning ? (item.startTime || now) : item.startTime 
-              });
-            };
-            actionsDiv.appendChild(playBtn);
-
-            // 2. Editar (Texto e Sala)
-            const editBtn = document.createElement('button');
-            editBtn.className = 'btn-edit';
-            editBtn.innerHTML = '✏️';
-            editBtn.title = 'Editar procedimento ou sala';
-            editBtn.onclick = () => {
-              const novoTexto = prompt("Modificar o procedimento:", item.text);
-              if (novoTexto === null) return;
-
-              const opcoesSala = "Definir local:\n0 - Sem Sala\n1 - Sala 1\n2 - Sala 2\n3 - Sala 3\n4 - Fora do Bloco";
-              const escolhaSala = prompt(opcoesSala, item.room ? item.room : "0");
-
-              let novaSala = item.room || "";
-              if (escolhaSala === "0" || escolhaSala === "" || escolhaSala === null) novaSala = "";
-              else if (escolhaSala === "1" || escolhaSala.toLowerCase() === "sala 1") novaSala = "Sala 1";
-              else if (escolhaSala === "2" || escolhaSala.toLowerCase() === "sala 2") novaSala = "Sala 2";
-              else if (escolhaSala === "3" || escolhaSala.toLowerCase() === "sala 3") novaSala = "Sala 3";
-              else if (escolhaSala === "4" || escolhaSala.toLowerCase() === "fora do bloco") novaSala = "Fora do Bloco";
-              else novaSala = escolhaSala;
-
-              update(ref(db, `tarefas_bosu/${id}`), { 
-                text: novoTexto.trim() !== "" ? novoTexto.trim() : item.text,
-                room: novaSala
-              });
-            };
-            actionsDiv.appendChild(editBtn);
-            // 3. Ordem
-            if (index > 0) {
-              const upBtn = document.createElement('button');
-              upBtn.className = 'btn-reorder';
-              upBtn.innerHTML = '⬆️';
-              upBtn.title = 'Subir prioridade';
-              upBtn.onclick = () => swapOrder(item, listArray[index - 1]);
-              actionsDiv.appendChild(upBtn);
-            }
-
-            if (index < listArray.length - 1) {
-              const downBtn = document.createElement('button');
-              downBtn.className = 'btn-reorder';
-              downBtn.innerHTML = '⬇️';
-              downBtn.title = 'Descer prioridade';
-              downBtn.onclick = () => swapOrder(item, listArray[index + 1]);
-              actionsDiv.appendChild(downBtn);
-            }
-
-            // 4. Mover p/ Feito
-            const moveBtn = document.createElement('button');
-            moveBtn.className = 'btn-move';
-            moveBtn.textContent = '➔ Feito';
-            moveBtn.onclick = () => {
-              update(ref(db, `tarefas_bosu/${id}`), { 
-                status: 'done', 
-                isRunning: false,
-                endTime: Date.now()
-              });
-            };
-            actionsDiv.appendChild(moveBtn);
-          }
-
-          // Botão Apagar Individual
-          const deleteBtn = document.createElement('button');
-          deleteBtn.className = 'delete';
-          deleteBtn.innerHTML = '🗑️';
-          deleteBtn.title = 'Apagar';
-          deleteBtn.onclick = () => {
-            if (item.status === 'done' && URL_GOOGLE_SCRIPT && !URL_GOOGLE_SCRIPT.includes("COLE_AQUI")) {
-              const now = new Date();
-              const duracao = item.startTime ? Math.max(0, Math.round((now.getTime() - item.startTime) / 60000)) : "";
-              const horaInicioStr = item.startTime ? new Date(item.startTime).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' }) : "--:--";
-
-              fetch(URL_GOOGLE_SCRIPT, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  texto: item.text,
-                  local: item.room || "N/A",
-                  horaInicio: horaInicioStr,
-                  horaFim: now.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' }),
-                  duracaoMin: duracao
-                })
-              }).catch(err => console.error("Erro ao enviar para o Sheets:", err));
-            }
-
-            remove(ref(db, `tarefas_bosu/${id}`));
-          };
-          actionsDiv.appendChild(deleteBtn);
-          div.appendChild(actionsDiv);
-        }
-
-        return div;
-      }
-
-      function swapOrder(itemA, itemB) {
-        const orderA = itemA.order || itemA.timestamp || 0;
-        const orderB = itemB.order || itemB.timestamp || 0;
-        const newOrderA = (orderA === orderB) ? orderB + 1 : orderB;
-        const newOrderB = orderA;
-
-        update(ref(db, `tarefas_bosu/${itemA.id}`), { order: newOrderA });
-        update(ref(db, `tarefas_bosu/${itemB.id}`), { order: newOrderB });
-      }
-    });
-  </script>
 </head>
 <body>
 
   <header>
-    <h1>Trabalho BOSU</h1>
+    <div class="brand">
+      <h1>Trabalho BOSU</h1>
+      <small>Urgência · Anestesiologia</small>
+    </div>
     <div class="header-info">
-      <span class="phone-info"><span class="phone-icon">&#9742;</span> Anestesia: 31615</span>
+      <span class="phone-info" id="phoneInfo">Anestesia: 31615</span>
+      <span id="connStatus" class="conn"><span class="dot"></span>…</span>
       <span id="clockDisplay">--:--</span>
-      <button class="btn-fs" id="btnFullscreen">⛶ </button>
+      <button class="hbtn" id="btnView" type="button"></button>
+      <button class="hbtn" id="btnBell" type="button"></button>
+      <button class="hbtn" id="btnLogin" type="button"></button>
+      <button class="hbtn" id="btnFullscreen" type="button" title="Ecrã inteiro" aria-label="Ecrã inteiro"></button>
     </div>
   </header>
 
-  <div class="controls">
-    <input type="text" id="taskInput" placeholder="Escreva o procedimento..." />
-   <select id="roomSelect">
-      <option value="">Sem Sala / A definir</option>
+  <form class="controls" id="addForm" autocomplete="off">
+    <input type="text" id="taskInput" placeholder="Procedimento (Enter adiciona)" />
+    <select id="roomSelect">
+      <option value="">Sem sala / A definir</option>
       <option value="Sala 1">Sala 1</option>
       <option value="Sala 2">Sala 2</option>
       <option value="Sala 3">Sala 3</option>
       <option value="Fora do Bloco">Fora do Bloco</option>
     </select>
+    <label class="field-time">Jejum desde <input type="time" id="jejumInput"></label>
     <select id="statusSelect">
-      <option value="todo">Por Fazer</option>
+      <option value="todo">Por fazer</option>
       <option value="done">Feito</option>
     </select>
-    <button class="add-btn" id="addBtn">Adicionar</button>
-    <button class="batch-clean-btn" id="batchCleanBtn">📦 </button>
-  </div>
+    <button class="add-btn" type="submit">Adicionar</button>
+    <button class="hbtn batch-clean-btn" id="batchCleanBtn" type="button" title="Arquivar concluídos no Sheets e limpar"></button>
+  </form>
 
   <div class="board">
     <div class="column col-todo">
-      <div class="column-header" id="todoHeader">Por Fazer (0)</div>
+      <div class="column-header"><span>Por fazer</span><span class="count" id="todoCount">0</span></div>
       <div class="card-list" id="todoList"></div>
     </div>
     <div class="column col-done">
-      <div class="column-header" id="doneHeader">Feito (0)</div>
+      <div class="column-header"><span>Feito</span><span class="count" id="doneCount">0</span></div>
       <div class="card-list" id="doneList"></div>
     </div>
   </div>
 
+  <!-- Diálogo de edição -->
+  <dialog id="editDialog">
+    <form id="editForm">
+      <h2>Editar procedimento</h2>
+      <label class="f">Procedimento <input type="text" id="eText" required></label>
+      <label class="f">Local
+        <select id="eRoom">
+          <option value="">Sem sala / A definir</option>
+          <option value="Sala 1">Sala 1</option>
+          <option value="Sala 2">Sala 2</option>
+          <option value="Sala 3">Sala 3</option>
+          <option value="Fora do Bloco">Fora do Bloco</option>
+        </select>
+      </label>
+      <label class="f">Jejum desde (vazio se desconhecido) <input type="time" id="eJejum"></label>
+      <div class="dlg-actions">
+        <button type="button" id="eCancel">Cancelar</button>
+        <button type="submit" class="primary">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Diálogo de entrada -->
+  <dialog id="loginDialog">
+    <form id="loginForm">
+      <h2>Entrar para gerir a lista</h2>
+      <input type="text" id="userInput" autocomplete="username" hidden>
+      <input type="password" id="pwInput" placeholder="Palavra-passe" autocomplete="current-password" required>
+      <p class="err" id="loginErr"></p>
+      <div class="dlg-actions">
+        <button type="button" id="loginCancel">Cancelar</button>
+        <button type="submit" class="primary">Entrar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+    import { getAuth, signInAnonymously, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+
+    // Conta da equipa criada em Firebase > Authentication > Users.
+    // A palavra-passe não está no código: é verificada pelo Firebase.
+    const EMAIL_EQUIPA = "equipa@trabalho-bosu.pt";
+
+    // CONFIGURAÇÃO FIREBASE (Manter chaves)
+    const firebaseConfig = {
+      apiKey: "AIzaSyASiNTd_r5CzxxgxQNuBL5UPtVjI5HpDcE",
+      authDomain: "trabalho-bosu.firebaseapp.com",
+      databaseURL: "https://trabalho-bosu-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "trabalho-bosu",
+      storageBucket: "trabalho-bosu.firebasestorage.app",
+      messagingSenderId: "798452896445",
+      appId: "1:798452896445:web:c1ee684a8ed2e076915dd4",
+      measurementId: "G-L82P8EPRKY"
+    };
+    const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbzL4G7kqJqwhfaaJS1mYM_JN9AguYAG2uYtkCCfIGQy0dWHGbnwylmXoZiGcOeVQLwrsg/exec";
+
+    const SALAS = ['Sala 1', 'Sala 2', 'Sala 3', 'Fora do Bloco'];
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const auth = getAuth(app);
+    const tasksRef = ref(db, 'tarefas_bosu');
+
+    // ---------- Ícones (monocromáticos, seguem a cor do texto) ----------
+    const PATHS = {
+      play: '<path d="M7 4.5v15l12-7.5z" fill="currentColor" stroke="none"/>',
+      pause: '<rect x="6" y="4.5" width="4" height="15" rx="1" fill="currentColor" stroke="none"/><rect x="14" y="4.5" width="4" height="15" rx="1" fill="currentColor" stroke="none"/>',
+      edit: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+      up: '<path d="M12 19V5"/><path d="m5 12 7-7 7 7"/>',
+      down: '<path d="M12 5v14"/><path d="m19 12-7 7-7-7"/>',
+      check: '<path d="M20 6 9 17l-5-5"/>',
+      trash: '<path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m19 6-1 14H6L5 6"/>',
+      archive: '<rect x="2.5" y="3.5" width="19" height="5" rx="1"/><path d="M4.5 8.5V19a1.5 1.5 0 0 0 1.5 1.5h12a1.5 1.5 0 0 0 1.5-1.5V8.5"/><path d="M10 12.5h4"/>',
+      bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',
+      bellOff: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/><path d="m3 3 18 18"/>',
+      lock: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+      unlock: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.9-1"/>',
+      grid: '<rect x="3" y="3" width="7.5" height="7.5" rx="1"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1"/>',
+      list: '<path d="M9 6h12M9 12h12M9 18h12"/><path d="M4 6h.01M4 12h.01M4 18h.01" stroke-width="3"/>',
+      maximize: '<path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/>',
+      phone: '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/>'
+    };
+    const icon = n => `<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${PATHS[n]}</svg>`;
+    const comLabel = (n, txt) => icon(n) + `<span class="lbl">${txt}</span>`;
+
+    // Ícones estáticos
+    document.getElementById('phoneInfo').innerHTML = icon('phone') + 'Anestesia: 31615';
+    document.getElementById('btnFullscreen').innerHTML = icon('maximize');
+    document.getElementById('batchCleanBtn').innerHTML = comLabel('archive', 'Arquivar');
+
+    // ---------- Utilitários ----------
+    const $ = id => document.getElementById(id);
+    const ls = {
+      get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+      set(k, v) { try { localStorage.setItem(k, v); } catch {} }
+    };
+    const pad = n => String(n).padStart(2, '0');
+    const hhmm = ts => { const d = new Date(ts); return pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+    function duracaoTexto(ms) {
+      const m = Math.max(0, Math.floor(ms / 60000));
+      return m < 60 ? m + ' min' : Math.floor(m / 60) + 'h' + pad(m % 60);
+    }
+    // Hora "HH:MM" → timestamp (se a hora estiver no futuro, assume o dia anterior)
+    function horaParaTs(v) {
+      if (!v) return null;
+      const [h, m] = v.split(':').map(Number);
+      const d = new Date(); d.setHours(h, m, 0, 0);
+      if (d.getTime() > Date.now() + 5 * 60000) d.setDate(d.getDate() - 1);
+      return d.getTime();
+    }
+    const ordemDe = it => it.order || it.timestamp || 0;
+    function botao(cls, html, titulo, fn) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = cls;
+      b.innerHTML = html;
+      b.title = titulo;
+      b.setAttribute('aria-label', titulo);
+      b.onclick = fn;
+      return b;
+    }
+
+    // ---------- Cronómetro com pausa real ----------
+    // elapsed = tempo acumulado em segmentos já pausados; runStart = início do segmento atual
+    const runStartOf = it => it.runStart || it.startTime || null;
+    function decorridoMs(it, ate = Date.now()) {
+      if (it.elapsed == null && it.status === 'done' && it.startTime && it.endTime) {
+        return Math.max(0, it.endTime - it.startTime);       // registos antigos
+      }
+      let ms = it.elapsed || 0;
+      if (it.isRunning && runStartOf(it)) ms += ate - runStartOf(it);
+      return Math.max(0, ms);
+    }
+
+    // ---------- Estado da aplicação ----------
+    let canWrite = false;
+    let items = [];
+    let view = ls.get('bosu-view') === 'sala' ? 'sala' : 'estado';
+    let localAte = 0;                                  // suprime avisos das próprias ações
+    const marcarAcaoLocal = () => { localAte = Date.now() + 4000; };
+
+    // ---------- Relógio ----------
+    function updateClock() { $('clockDisplay').textContent = hhmm(Date.now()); }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // ---------- Ecrã Inteiro ----------
+    $('btnFullscreen').addEventListener('click', () => {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(console.error);
+      else document.exitFullscreen?.();
+    });
+
+    // ---------- Vista por estado / por sala ----------
+    function atualizarBtnView() {
+      const porSala = view === 'sala';
+      $('btnView').innerHTML = porSala ? comLabel('list', 'Lista') : comLabel('grid', 'Por sala');
+      $('btnView').title = porSala ? 'Voltar à lista por prioridade' : 'Agrupar por sala';
+    }
+    $('btnView').addEventListener('click', () => {
+      view = view === 'estado' ? 'sala' : 'estado';
+      ls.set('bosu-view', view);
+      atualizarBtnView();
+      render();
+    });
+    atualizarBtnView();
+
+    // ---------- Indicador de ligação ----------
+    function definirConn(estado, texto, titulo) {
+      const c = $('connStatus');
+      c.className = 'conn ' + estado;
+      c.innerHTML = '<span class="dot"></span>';
+      c.appendChild(document.createTextNode(texto));
+      c.title = titulo;
+    }
+    onValue(ref(db, '.info/connected'), s => {
+      const on = s.val() === true;
+      definirConn(on ? 'on' : 'off', on ? 'Ligado' : 'Sem ligação',
+        on ? 'Lista sincronizada em tempo real' : 'Sem ligação: a lista pode estar desatualizada');
+    });
+
+    // ---------- Avisos (som, vibração, notificação) ----------
+    let avisosAtivos = ls.get('bosu-avisos') === '1';
+    let audioCtx = null;
+    let swReg = null;
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(r => { swReg = r; }).catch(() => {});
+    }
+    function prepararAudio() {
+      if (!audioCtx) { const AC = window.AudioContext || window.webkitAudioContext; if (AC) audioCtx = new AC(); }
+      audioCtx?.resume?.();
+    }
+    // Os browsers só deixam tocar som depois de um toque no ecrã
+    if (avisosAtivos) document.addEventListener('pointerdown', prepararAudio, { once: true });
+
+    function beep() {
+      if (!audioCtx) return;
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const t = audioCtx.currentTime;
+      [0, 0.25].forEach(d => {
+        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.frequency.value = 880; o.connect(g); g.connect(audioCtx.destination);
+        g.gain.setValueAtTime(0.0001, t + d);
+        g.gain.exponentialRampToValueAtTime(0.3, t + d + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + d + 0.18);
+        o.start(t + d); o.stop(t + d + 0.2);
+      });
+    }
+    let toastTimer;
+    function mostrarToast(msg) {
+      const t = $('toast'); t.textContent = msg; t.classList.add('show');
+      clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 5000);
+    }
+    function notificar(titulo, corpo) {
+      mostrarToast(titulo + (corpo ? ' — ' + corpo : ''));
+      if (!avisosAtivos) return;
+      beep();
+      navigator.vibrate?.([200, 100, 200]);
+      if (document.hidden && 'Notification' in window && Notification.permission === 'granted' && swReg) {
+        swReg.showNotification(titulo, { body: corpo || '', tag: 'bosu', renotify: true });
+      }
+    }
+    function atualizarBtnBell() {
+      $('btnBell').innerHTML = comLabel(avisosAtivos ? 'bell' : 'bellOff', 'Avisos');
+      $('btnBell').setAttribute('aria-pressed', avisosAtivos ? 'true' : 'false');
+      $('btnBell').title = avisosAtivos ? 'Avisos ligados (clique para desligar)' : 'Avisos desligados (clique para ligar)';
+    }
+    $('btnBell').addEventListener('click', async () => {
+      avisosAtivos = !avisosAtivos;
+      ls.set('bosu-avisos', avisosAtivos ? '1' : '0');
+      atualizarBtnBell();
+      if (avisosAtivos) {
+        prepararAudio();
+        if ('Notification' in window && Notification.permission === 'default') {
+          try { await Notification.requestPermission(); } catch {}
+        }
+        beep();
+        mostrarToast('Avisos ligados neste dispositivo');
+      } else {
+        mostrarToast('Avisos desligados');
+      }
+    });
+    atualizarBtnBell();
+
+    // ---------- Autenticação ----------
+    function atualizarBtnLogin() {
+      $('btnLogin').innerHTML = canWrite ? comLabel('unlock', 'Sair') : comLabel('lock', 'Entrar');
+      $('btnLogin').title = canWrite ? 'Sair do modo de gestão neste dispositivo' : 'Entrar para gerir a lista';
+    }
+    atualizarBtnLogin();
+
+    let subscrito = false;
+    onAuthStateChanged(auth, user => {
+      if (!user) {
+        signInAnonymously(auth).catch(err => {
+          console.error(err);
+          avisoLeitura('Modo leitura bloqueado: ative o login "Anónimo" no Firebase (' + err.code + ')');
+        });
+        return;
+      }
+      canWrite = !user.isAnonymous;
+      document.body.classList.toggle('can-write', canWrite);
+      atualizarBtnLogin();
+      if (!subscrito) { subscrito = true; subscrever(); }
+      render();
+    });
+
+    $('btnLogin').addEventListener('click', () => {
+      if (canWrite) {
+        if (confirm('Sair do modo de gestão neste dispositivo?')) signOut(auth).then(() => location.reload());
+      } else {
+        $('loginErr').textContent = '';
+        $('pwInput').value = '';
+        $('userInput').value = EMAIL_EQUIPA;
+        $('loginDialog').showModal();
+        $('pwInput').focus();
+      }
+    });
+    $('loginCancel').addEventListener('click', () => $('loginDialog').close());
+    $('loginForm').addEventListener('submit', e => {
+      e.preventDefault();
+      $('loginErr').textContent = 'A verificar…';
+      signInWithEmailAndPassword(auth, EMAIL_EQUIPA, $('pwInput').value)
+        .then(() => { $('loginDialog').close(); mostrarToast('Modo de gestão ativo neste dispositivo'); })
+        .catch(err => {
+          $('loginErr').textContent = err.code === 'auth/too-many-requests'
+            ? 'Demasiadas tentativas. Aguarde um pouco.'
+            : 'Palavra-passe incorreta.';
+        });
+    });
+
+    // ---------- Dados em tempo real ----------
+    let idsConhecidos = null, ordemAnterior = null;
+    function subscrever() {
+      onValue(tasksRef, snapshot => {
+        const data = snapshot.val() || {};
+        items = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+        items.sort((a, b) => ordemDe(a) - ordemDe(b));
+        const ordemTodo = items.filter(i => i.status === 'todo').map(i => i.id);
+
+        // Avisos: novos casos ou mudança de prioridades feitos noutro dispositivo
+        if (idsConhecidos && Date.now() > localAte) {
+          const novos = items.filter(i => !idsConhecidos.has(i.id));
+          if (novos.length === 1) {
+            notificar('Novo caso', (novos[0].room ? novos[0].room + ' · ' : '') + novos[0].text);
+          } else if (novos.length > 1) {
+            notificar(novos.length + ' novos casos', novos.map(n => n.text).join(', '));
+          } else {
+            const comuns = ordemAnterior.filter(id => ordemTodo.includes(id));
+            const agora = ordemTodo.filter(id => comuns.includes(id));
+            if (comuns.join() !== agora.join()) notificar('Prioridades alteradas', 'A ordem da lista mudou');
+          }
+        }
+        idsConhecidos = new Set(items.map(i => i.id));
+        ordemAnterior = ordemTodo;
+        render();
+      }, err => {
+        console.error(err);
+        subscrito = false;   // volta a tentar quando o login mudar
+        avisoLeitura('Sem permissão para ler a lista: verifique as regras e o login "Anónimo" no Firebase');
+      });
+    }
+
+    // Mostra no ecrã porque é que a lista não carrega
+    function avisoLeitura(msg) {
+      definirConn('off', 'Sem acesso', msg);
+      mostrarToast(msg);
+    }
+    setInterval(render, 30000);   // atualiza cronómetros e horas de jejum
+
+    // ---------- Adicionar (Enter ou botão) ----------
+    $('addForm').addEventListener('submit', e => {
+      e.preventDefault();
+      if (!canWrite) return;
+      const text = $('taskInput').value.trim();
+      if (!text) return;
+      const now = Date.now();
+      const done = $('statusSelect').value === 'done';
+      marcarAcaoLocal();
+      push(tasksRef, {
+        text,
+        room: $('roomSelect').value,
+        status: done ? 'done' : 'todo',
+        isRunning: false,
+        jejumDesde: horaParaTs($('jejumInput').value),
+        endTime: done ? now : null,
+        order: now,
+        timestamp: now
+      });
+      $('taskInput').value = '';
+      $('jejumInput').value = '';
+      $('taskInput').focus();
+    });
+
+    // ---------- Sheets ----------
+    function linhaSheets(item) {
+      const fim = item.endTime || Date.now();
+      return {
+        texto: item.text,
+        local: item.room || "N/A",
+        horaInicio: item.startTime ? hhmm(item.startTime) : "--:--",
+        horaFim: hhmm(fim),
+        duracaoMin: item.startTime ? Math.round(decorridoMs(item, fim) / 60000) : ""
+      };
+    }
+    function enviarSheets(payload) {
+      if (!URL_GOOGLE_SCRIPT || URL_GOOGLE_SCRIPT.includes("COLE_AQUI")) return;
+      fetch(URL_GOOGLE_SCRIPT, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).catch(err => console.error("Erro ao enviar para o Sheets:", err));
+    }
+
+    // ---------- Arquivar em lote ----------
+    $('batchCleanBtn').addEventListener('click', () => {
+      if (!canWrite) return;
+      const feitos = items.filter(i => i.status === 'done');
+      if (feitos.length === 0) {
+        alert("Não existem procedimentos concluídos para arquivar.");
+        return;
+      }
+      if (!confirm(`Tem a certeza que deseja arquivar todos os ${feitos.length} procedimentos concluídos e limpar a lista?`)) return;
+      enviarSheets(feitos.map(linhaSheets));
+      const upd = {};
+      feitos.forEach(i => { upd[i.id] = null; });
+      marcarAcaoLocal();
+      update(tasksRef, upd);
+    });
+
+    // ---------- Editar ----------
+    let emEdicao = null;
+    function abrirEditar(item) {
+      emEdicao = item;
+      $('eText').value = item.text;
+      const sel = $('eRoom');
+      if (item.room && ![...sel.options].some(o => o.value === item.room)) sel.add(new Option(item.room, item.room));
+      sel.value = item.room || '';
+      $('eJejum').value = item.jejumDesde ? hhmm(item.jejumDesde) : '';
+      $('editDialog').showModal();
+    }
+    $('eCancel').addEventListener('click', () => $('editDialog').close());
+    $('editForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const item = emEdicao; if (!item) return;
+      const jv = $('eJejum').value;
+      const jejumInalterado = jv === (item.jejumDesde ? hhmm(item.jejumDesde) : '');
+      marcarAcaoLocal();
+      update(ref(db, `tarefas_bosu/${item.id}`), {
+        text: $('eText').value.trim() || item.text,
+        room: $('eRoom').value,
+        jejumDesde: jejumInalterado ? (item.jejumDesde || null) : horaParaTs(jv)
+      });
+      $('editDialog').close();
+    });
+
+    // ---------- Renderização ----------
+    function render() {
+      const todoList = $('todoList'), doneList = $('doneList');
+      todoList.innerHTML = '';
+      doneList.innerHTML = '';
+      const todoItems = items.filter(i => i.status === 'todo');
+      const doneItems = items.filter(i => i.status === 'done');
+
+      if (view === 'estado') {
+        todoItems.forEach((item, index) => todoList.appendChild(createCardElement(item, index, todoItems)));
+        doneItems.forEach((item, index) => doneList.appendChild(createCardElement(item, index, doneItems)));
+      } else {
+        renderPorSala(todoList, todoItems);
+        renderPorSala(doneList, doneItems);
+      }
+      if (!todoItems.length) todoList.appendChild(vazio('Sem procedimentos pendentes'));
+      if (!doneItems.length) doneList.appendChild(vazio('Nenhum procedimento concluído'));
+
+      $('todoCount').textContent = todoItems.length;
+      $('doneCount').textContent = doneItems.length;
+    }
+    function vazio(txt) {
+      const d = document.createElement('div');
+      d.className = 'empty';
+      d.textContent = txt;
+      return d;
+    }
+
+    // Agrupa os casos por sala dentro da mesma coluna (mantém a ordem de prioridade em cada sala)
+    function renderPorSala(container, lista) {
+      for (const sala of [...SALAS, '']) {
+        const doGrupo = lista.filter(i => sala === '' ? !SALAS.includes(i.room || '') : i.room === sala);
+        if (!doGrupo.length) continue;
+        const titulo = document.createElement('div');
+        titulo.className = 'room-group-title';
+        titulo.textContent = `${sala || 'Sem sala'} · ${doGrupo.length}`;
+        container.appendChild(titulo);
+        doGrupo.forEach((item, index) => container.appendChild(createCardElement(item, index, doGrupo)));
+      }
+    }
+
+    function createCardElement(item, index, listArray) {
+      const id = item.id;
+      const div = document.createElement('div');
+      div.className = 'card' + (item.isRunning ? ' running' : '');
+
+      const headerRow = document.createElement('div');
+      headerRow.className = 'card-header-row';
+
+      const textContainer = document.createElement('div');
+      textContainer.className = 'card-text-container';
+
+      // Sala (na vista por sala já aparece no subtítulo)
+      if (view === 'estado' && item.room && item.room.trim() !== "") {
+        const roomBadge = document.createElement('span');
+        roomBadge.className = 'room-badge';
+        roomBadge.textContent = item.room;
+        textContainer.appendChild(roomBadge);
+      }
+
+      const textSpan = document.createElement('span');
+      textSpan.className = 'card-text';
+      textSpan.textContent = item.text;
+      textContainer.appendChild(textSpan);
+
+      // Jejum (só nos casos por fazer)
+      if (item.status === 'todo' && item.jejumDesde) {
+        const jejum = document.createElement('span');
+        jejum.className = 'info-tag';
+        jejum.textContent = 'Jejum ' + duracaoTexto(Date.now() - item.jejumDesde);
+        jejum.title = 'Jejum desde as ' + hhmm(item.jejumDesde);
+        textContainer.appendChild(jejum);
+      }
+
+      headerRow.appendChild(textContainer);
+
+      // Cronómetro: a decorrer ou em pausa
+      if (item.isRunning) {
+        const tag = document.createElement('span');
+        tag.className = 'running-tag';
+        tag.textContent = 'Em curso · ' + duracaoTexto(decorridoMs(item));
+        headerRow.appendChild(tag);
+      } else if (item.status === 'todo' && item.elapsed > 0) {
+        const tag = document.createElement('span');
+        tag.className = 'info-tag';
+        tag.textContent = 'Em pausa · ' + duracaoTexto(item.elapsed);
+        headerRow.appendChild(tag);
+      }
+
+      div.appendChild(headerRow);
+
+      if (canWrite) {
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'card-actions';
+
+        if (item.status === 'todo') {
+          // 1. Iniciar / Pausar (a pausa congela o tempo decorrido)
+          actionsDiv.appendChild(botao(
+            'btn-play' + (item.isRunning ? ' active' : ''),
+            icon(item.isRunning ? 'pause' : 'play'),
+            item.isRunning ? 'Pausar' : 'Iniciar procedimento',
+            () => {
+              const now = Date.now();
+              marcarAcaoLocal();
+              if (item.isRunning) {
+                update(ref(db, `tarefas_bosu/${id}`), { isRunning: false, elapsed: decorridoMs(item, now), runStart: null });
+              } else {
+                update(ref(db, `tarefas_bosu/${id}`), { isRunning: true, runStart: now, startTime: item.startTime || now });
+              }
+            }
+          ));
+
+          // 2. Editar
+          actionsDiv.appendChild(botao('btn-edit', icon('edit'), 'Editar procedimento, sala ou jejum', () => abrirEditar(item)));
+
+          // 3. Ordem
+          if (index > 0) {
+            actionsDiv.appendChild(botao('btn-reorder', icon('up'), 'Subir prioridade', () => swapOrder(item, listArray[index - 1], -1)));
+          }
+          if (index < listArray.length - 1) {
+            actionsDiv.appendChild(botao('btn-reorder', icon('down'), 'Descer prioridade', () => swapOrder(item, listArray[index + 1], 1)));
+          }
+
+          // 4. Mover p/ Feito (guarda a hora de fim e o tempo efetivo)
+          actionsDiv.appendChild(botao('btn-move', icon('check') + 'Feito', 'Marcar como feito', () => {
+            const now = Date.now();
+            marcarAcaoLocal();
+            update(ref(db, `tarefas_bosu/${id}`), {
+              status: 'done',
+              isRunning: false,
+              elapsed: item.startTime ? decorridoMs(item, now) : null,
+              runStart: null,
+              endTime: now
+            });
+          }));
+        }
+
+        // Apagar individual
+        actionsDiv.appendChild(botao('delete', icon('trash'), 'Apagar', () => {
+          if (!confirm(`Apagar "${item.text}"?`)) return;
+          if (item.status === 'done') enviarSheets(linhaSheets(item));
+          marcarAcaoLocal();
+          remove(ref(db, `tarefas_bosu/${id}`));
+        }));
+        div.appendChild(actionsDiv);
+      }
+
+      return div;
+    }
+
+    // dir: -1 = subir, +1 = descer (resolve também o caso de ordens iguais)
+    function swapOrder(itemA, itemB, dir) {
+      const orderA = ordemDe(itemA);
+      const orderB = ordemDe(itemB);
+      const newOrderA = orderA === orderB ? orderB + dir : orderB;
+      marcarAcaoLocal();
+      update(tasksRef, {
+        [`${itemA.id}/order`]: newOrderA,
+        [`${itemB.id}/order`]: orderA
+      });
+    }
+  </script>
 </body>
 </html>
